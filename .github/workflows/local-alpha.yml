@@ -45,6 +45,7 @@ jobs:
           "$RUNNER_TEMP/build-venv/bin/python" -B tools/check.py --output "$RUNNER_TEMP/full55" --deadline "$("$RUNNER_TEMP/build-venv/bin/python" -c 'import time; print(time.time()+1100)')"
       - name: Wheel and sdist install with real CLI and MCP smoke
         run: |
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/distribution_diagnostics.py
           "$RUNNER_TEMP/build-venv/bin/python" -B tools/check_distribution.py --output "$RUNNER_TEMP/distribution"
       - name: Retain scoped verification evidence
         if: always()
