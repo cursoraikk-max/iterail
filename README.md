@@ -287,7 +287,14 @@ compatibility preflight evidence only for this portable alpha; it is not a full
 current-suite validation. The bounded AST adapter supports3.11/3.14, fails closed
 on unknown minors, and does not establish every Python>=3.11 combination. Linux,
 Windows and other Python minor versions remain unverified; POSIX process-group
-behavior is not a Windows isolation guarantee. Remote CI has not run.
+behavior is not a Windows isolation guarantee. The configured CI matrix is GitHub-hosted `ubuntu-24.04` and `macos-14`, both
+Python3.11, on pushes/PRs to main and manual dispatch. Each job requires the full55
+portable gate plus wheel/sdist builds, isolated installs and real CLI/MCP smoke.
+It replaces the old self-hosted-only workflow. Only standard hosted runners are
+used; no repository secrets, model calls or publication. Build tools are downloaded
+from PyPI into a fresh job-local venv; runtime remains dependency-free. Local Mac
+results do not establish hosted Linux/macOS passes. Hosted results are pending;
+no passing badge is asserted. See [CI details](docs/CI.md).
 
 To request a separately authorized full suite or repeat the installed local example:
 
@@ -360,7 +367,8 @@ Read [CONTRIBUTING](CONTRIBUTING.md), [CHANGELOG](CHANGELOG.md),
 [SOURCE-PROVENANCE](docs/SOURCE-PROVENANCE.md) and [LICENSE](LICENSE).
 Keep failing tests/evidence, original authority and exact source binding; independent
 review is required rather than Agent self-attestation. This revision adds installation documentation and a local install helper; runtime code is unchanged. It adds
-no runtime feature, provider call or remote CI run. The MIT notice is
+no runtime feature or provider call. CI is configured; remote execution results
+must be checked on the exact tested commit. The MIT notice is
 updated to the owner-confirmed TIM attribution; its MIT grant terms are unchanged.
 The GitHub-only private vulnerability channel still needs actual activation checks.
 No registry upload, external model call or remote publication is established by
