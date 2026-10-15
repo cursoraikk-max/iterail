@@ -1,0 +1,18 @@
+# Bounded experience ledger
+
+The shared Core exposes `experience_record` and `experience_query` through CLI and MCP. They add knowledge records without changing task state, acceptance, permissions, budgets or review requirements. There is no vector database or service.
+
+```sh
+python3 -m agent_workflow --state /absolute/state experience_record --args '{"kind":"hypothesis","run_id":"run-...","statement":"A possible cause to investigate"}'
+python3 -m agent_workflow --state /absolute/state experience_record --args '{"kind":"fact","run_id":"run-...","statement":"Observed failure","proof_seq":"6"}'
+python3 -m agent_workflow --state /absolute/state experience_record --args '{"kind":"verified","run_id":"run-...","proof_seq":"12"}'
+python3 -m agent_workflow --state /absolute/state experience_query --args '{"include_stale":"true","limit":"20"}'
+```
+
+All optional numeric and boolean arguments are strings, matching the minimal MCP interface. `proof_seq` is an explicit canonical verification event sequence from `history`, not an agent confidence score. A verified record rejects arbitrary statement text and emits only `configured_tests_passed`, with exact command/exit, run, task revision, controller, policy, candidate and event SHA bindings. Its proof must be the run's current passing evidence for the exact present source, including a producer-bound acceptance command when applicable. Historical or failed evidence cannot promote a statement. Facts remain `reported_unverified` even when linked to machine evidence; hypotheses remain `untrusted_hypothesis`.
+
+Records carry source version, a machine-derived failure fingerprint when a prior failed verification exists, proof identity, retained-log references/SHA and expiry. The ledger stores up to four actual retained stdout/stderr streams per entry, prioritizing failing commands. Each is at most 65,536 bytes; `source_truncated` distinguishes a prefix from complete original output. `omitted_log_streams` reports streams not copied. The complete original canonical event SHA binds all command results; four copied logs do not imply that every output is included. No input accepts arbitrary log paths. Content-addressed logs stay within the state directory; symlinks, changed log bytes and proof drift downgrade trust. Pollution is sticky for the affected entry, requiring fresh machine proof instead of silently repairing its trust.
+
+The ledger permits 128 entries, 512 retained log files, 2,048-byte statements, 8 KiB entry summaries and 32 KiB query output. The query budget measures default public JSON with spaces and conservatively includes ordinary CLI/MCP content framing plus 128 bytes for JSON-RPC framing; a caller's arbitrarily large request ID is outside this data budget. Queries return at most 20 entries with explicit omitted counts. TTL is 1–604,800 seconds. Duplicate records retain their original expiry and use the same current validity checks as queries: they cannot reassert expired or sticky polluted trust. Capacity exhaustion is an explicit error; expired history is not silently deleted. Query defaults hide stale records, while `include_stale:true` returns them with reasons and downgraded verified trust.
+
+Experience text and log content are untrusted task data. They cannot create commands, grant permissions, increase budgets, skip tests or replace an independent reviewer. Every new attempt still needs its own current verification. The ledger provides same-user auditability, not tamper-proof isolation. A copied development-state database is only an evidence snapshot; recording experience in it does not constitute a second execution or acceptance of the development task.
