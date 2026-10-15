@@ -50,6 +50,11 @@ jobs:
           "$RUNNER_TEMP/build-venv/bin/python" -B tools/check_distribution.py --output "$RUNNER_TEMP/distribution"
           "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/gitfile_validation.py --installed
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/worktree_project.py --python "$RUNNER_TEMP/distribution/wheel/venv/bin/python" --installed
+      - name: Expired worker recovery (source and installed wheel)
+        run: |
+          mkdir "$RUNNER_TEMP/recovery"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/hostbridge_recovery.py > "$RUNNER_TEMP/recovery/source.stdout" 2> "$RUNNER_TEMP/recovery/source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/hostbridge_recovery.py --installed > "$RUNNER_TEMP/recovery/installed.stdout" 2> "$RUNNER_TEMP/recovery/installed.stderr"
       - name: Retain scoped verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -64,3 +69,5 @@ jobs:
             ${{ runner.temp }}/distribution/*.json
             ${{ runner.temp }}/distribution/*.stdout
             ${{ runner.temp }}/distribution/*.stderr
+            ${{ runner.temp }}/recovery/*.stdout
+            ${{ runner.temp }}/recovery/*.stderr
