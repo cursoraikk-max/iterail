@@ -1,17 +1,62 @@
-name: Local alpha checks
-on: workflow_dispatch
+name: Alpha CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
 permissions:
   contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
-  offline-contracts:
-    runs-on: [self-hosted, linux, alpha-offline]
-    timeout-minutes: 20
-    steps:
-      # Place the reviewed checkout on the pre-provisioned runner before dispatch.
-      # No checkout action, download, provider, credentials or publishing step.
-      - name: Validate pre-provisioned source
+  portable:
+    name: ${{ matrix.os }} / Python 3.11
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-14]
+    defaults:
+      run:
         shell: bash
+    env:
+      PYTHONDONTWRITEBYTECODE: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      PIP_CONFIG_FILE: /dev/null
+    steps:
+      - name: Checkout tested revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          set-safe-directory: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.11"
+      - name: Install build tools in a fresh environment
         run: |
-          test -f pyproject.toml
-          python3.11 -c 'import setuptools, wheel, pip'
-          python3.11 tools/check.py --output "$RUNNER_TEMP/alpha-results" --deadline "$(python3.11 -c 'import time; print(time.time()+1100)')"
+          python -m venv "$RUNNER_TEMP/build-venv"
+          "$RUNNER_TEMP/build-venv/bin/python" -m pip install --index-url https://pypi.org/simple --only-binary=:all: pip==25.1.1 setuptools==80.7.1 wheel==0.45.1
+      - name: Full portable gate (55 required commands; no skips)
+        run: |
+          "$RUNNER_TEMP/build-venv/bin/python" -B tools/check.py --output "$RUNNER_TEMP/full55" --deadline "$("$RUNNER_TEMP/build-venv/bin/python" -c 'import time; print(time.time()+1100)')"
+      - name: Wheel and sdist install with real CLI and MCP smoke
+        run: |
+          "$RUNNER_TEMP/build-venv/bin/python" -B tools/check_distribution.py --output "$RUNNER_TEMP/distribution"
+      - name: Retain scoped verification evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: checks-${{ matrix.os }}-py311
+          retention-days: 7
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/full55/*.json
+            ${{ runner.temp }}/full55/*.stdout
+            ${{ runner.temp }}/full55/*.stderr
+            ${{ runner.temp }}/distribution/*.json
+            ${{ runner.temp }}/distribution/*.stdout
+            ${{ runner.temp }}/distribution/*.stderr
