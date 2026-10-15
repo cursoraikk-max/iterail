@@ -31,6 +31,10 @@ main 的 PR 和手动触发。矩阵为 Ubuntu24.04/macOS14、Python3.11，不�
    after rejecting traversal, links and special files; owner headers must be neutral.
    Sdist installation means an offline backend rebuild to a wheel, not pip fetching
    build dependencies. This does not connect a host client or exercise a paid AI.
+   A separate real-child regression (`tests/packaging/distribution_diagnostics.py`)
+   requires timeout stdout/stderr and a failed command row with exit124, while
+   preserving ordinary nonzero exit diagnostics. The checker reuses the installer's
+   command recorder; timeouts do not guarantee isolation of an entire process tree.
 5. Official pinned upload-artifact retains scoped summaries/command logs for7 days,
    including failures; it excludes source copies, environments and state databases.
    GitHub stores normal CI logs/artifacts; this is not a package release.
@@ -54,8 +58,12 @@ With the documented Python3.11 build tools already installed, choose new output
 paths outside source. `tools/check.py --output PATH --deadline UNIX_TIME` uses a
 current explicit run deadline. `tools/check_distribution.py --output PATH` builds
 and tests both distributions. No historical development budget applies to a new run.
-Only macOS local reproduction was performed during this CI configuration change;
-hosted execution is verified separately after the workflow commit is submitted.
+The first hosted run [38764121662](https://github.com/cursoraikk-max/iterail/actions/runs/38764121662)
+passed both matrix jobs at commit `db16c160e3347d0db3ddd670142b3f1e7f7af0fd`,
+including full55, distribution checks and artifact upload. Later modifications
+require new results. The README badge tracks main's latest run, not every commit.
+This validates transport/tools on hosted Linux/macOS, not a real client connection,
+external model/provider or unattended AI worker.
 
 Official references:
 [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax),
