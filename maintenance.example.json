@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "project": {
+    "id": "agent-workflow",
+    "purpose": "Advance AI-assisted engineering and safely upgrade its own controller",
+    "goals": [
+      "Verified local delivery",
+      "Portable multi-client task workflow",
+      "Adapt to supported model and CLI capabilities"
+    ],
+    "non_goals": [
+      "Remote publication without authorization",
+      "New provider or credentials",
+      "Version-name-only benefit claims"
+    ],
+    "needs": [
+      {
+        "id": "codex-cli",
+        "kind": "dependency",
+        "name": "OpenAI Codex CLI",
+        "current": "rust-v0.162.1"
+      },
+      {
+        "id": "openai-capabilities",
+        "kind": "capability",
+        "name": "Structured tool, stream, context and model lifecycle compatibility",
+        "current": "Owner-baselined capability tests required"
+      }
+    ]
+  },
+  "approved_hosts": [
+    "api.github.com",
+    "developers.openai.com"
+  ],
+  "checks": [
+    {
+      "id": "codex-release",
+      "need_id": "codex-cli",
+      "source": {
+        "url": "https://api.github.com/repos/openai/codex/releases/latest",
+        "max_bytes": 1048576,
+        "format": "github_release"
+      },
+      "expected_current": "dd7952cb8368239388d2203a884a394cdddefb2421d39550640f9482cb9c062c",
+      "interval_seconds": 86400,
+      "backoff_seconds": 3600,
+      "jitter_seconds": 1800,
+      "acceptance": {
+        "kind": "version_or_deprecation"
+      },
+      "authorization": {
+        "admit_task": true,
+        "allow_dependency_update": false
+      }
+    }
+  ]
+}
