@@ -1,7 +1,17 @@
 <!-- section:overview -->
-# agent-workflow — local alpha
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/brand/logo-dark.svg">
+    <img src="assets/brand/logo-light.svg" alt="Iterail" width="480">
+  </picture>
+</p>
 
-[简体中文](README.zh-CN.md)
+<h1 align="center">Iterail</h1>
+
+<p align="center">Put AI work on a verifiable delivery track.</p>
+<p align="center"><a href="README.md">English</a> · <a href="README.zh-CN.md">简体中文</a> · <a href="docs/ARCHITECTURE.md">Architecture</a> · <a href="CONTRIBUTING.md">Contributing</a></p>
+
+**Local alpha · MIT © 2026 TIM · No third-party runtime dependencies**
 
 A local evidence-driven workflow toolkit for running AI workers. CLI and stdio MCP
 share one Core, local SQLite task/run/event history, lease fencing and source-bound
@@ -11,10 +21,32 @@ interface, not a scheduler or a model. Task text is inert data, not authority.
 Distribution metadata is **0.1.0a1**. Unchanged runtime MCP serverInfo is **0.1.0**;
 these are different version surfaces. The approved target repository is
 [cursoraikk-max/iterail](https://github.com/cursoraikk-max/iterail); package/name
-registry availability is unverified. This local alpha is prepared for that public
-repository; remote publication has not yet been verified. There is no daemon,
-external model call, global client configuration, publication or completed token/fee
-optimization. [Architecture](docs/ARCHITECTURE.md) explains the shared Core.
+registry availability is unverified. Publishing this alpha source does not install
+a daemon, call a model, modify global client configuration or complete token/fee
+optimization goals. [Architecture](docs/ARCHITECTURE.md) explains the shared Core.
+
+## Why Iterail
+
+Give running AI workers one queue, retain real changes and machine proof, then hand work to independent review.
+The product is **Iterail**; the compatible Python package `agent_workflow`, distribution and CLI `agent-workflow` stay unchanged.
+
+| Capability | Purpose |
+| --- | --- |
+| One source of truth | CLI and MCP share persistent tasks, runs and events |
+| Bounded work | Dedupe, leases, fixed permissions/budgets, retained failures and recovery |
+| Proof and review | Configured commands bind proof to exact source; Agent assertions do not pass work |
+| Portable instructions | Common Skill; the host supplies the actual Agent and authorization |
+
+```mermaid
+flowchart LR
+  Q[Import / dedupe] --> C[Claim lease]
+  C --> W[Work / record change]
+  W --> V[Machine verification]
+  V --> R[Independent review]
+  R --> A[Local acceptance]
+```
+
+Publication is a separate authorized action; local acceptance does not publish. MCP does not start or schedule Agents.
 
 <!-- section:install -->
 ## Prerequisites and offline installation
@@ -43,7 +75,7 @@ command with its exact path. To rebuild a local sdist, safely extract it to an o
 directory and run its included `tools/build_offline.py` with a new output path and
 the same original deadline, then install the resulting wheel. This is an offline
 backend rebuild, not pip build isolation or a registry installation. Wheel/sdist
-install README pair, CHANGELOG, license, docs and Skill under
+install README pair, CHANGELOG, license, docs, brand SVGs and Skill under
 `share/agent-workflow/` in the environment; only the sdist includes portable tests
 and source tools. [CONTRIBUTING](CONTRIBUTING.md) has build details.
 
@@ -113,6 +145,9 @@ changes to the temporary repo. It prints no token; private state/handle remain i
 the reported temporary directory and should be protected/removed after review.
 This is a local no-model example, not an external Agent or autonomous runner test.
 
+<details>
+<summary>Expand the complete no-model example</summary>
+
 ```python
 import json
 import os
@@ -170,6 +205,8 @@ print(json.dumps({"passed": True, "state": status["state"], "published": False,
                   "actions": actions, "private_handle": str(private_path), "model_calls": 0, "token_printed": False}))
 ```
 
+</details>
+
 Lifecycle: queued → running → changed → verifying → verified → ready_review →
 accepted. This example never calls accepted. An independent authorized reviewer
 must inspect exact-source machine proof before local acceptance; accepted is not
@@ -219,8 +256,10 @@ See [HOST](docs/HOST.md) and [DIAGNOSTICS](docs/DIAGNOSTICS.md).
 
 Use [SKILL.md](skills/agent-workflow/SKILL.md) as the portable host instructions;
 copy/adapt it only through the host's approved project-local mechanism. No global
-Skill install is performed here. Runtime/tests/tools/Skill remain byte-identical to
-the prior alpha for this documentation-only change. Client-specific differences
+Skill install is performed here. Runtime, unit tests and Skill remain byte-identical to the prior alpha.
+For release privacy, minimal synthetic startup inputs replace historical logs,
+and one portable helper changes data paths/provenance labels only; behavioral
+assertions remain. Client-specific differences
 belong in a thin adapter, not duplicated task truth. [CONTEXT](docs/CONTEXT.md)
 describes full mandatory context and optional conditional reuse: retain the exact
 full packet matching a revision; no hint reuses permissions, tests or acceptance.
@@ -229,9 +268,10 @@ full packet matching a revision; no hint reuses permissions, tests or acceptance
 ## Evidence, tested platforms and troubleshooting
 
 The prior alpha's exact source passed53 Core commands plus two supplements (55),
-including55 nested unit cases without skips, on macOS/Python3.11. This doc-only
-revision uses fresh scoped installed wheel/sdist checks, actual no-model lifecycle
-and MCP27; **the old55 suite was not rerun on this new source**. Python3.14 has
+including55 nested unit cases without skips, on macOS/Python3.11. This privacy-repaired
+revision uses the declared portable55 gate and scoped installed wheel/sdist, no-model
+lifecycle and MCP27 checks. Consult the source-bound release record for actual
+results; old passes never establish current acceptance. Python3.14 has
 compatibility preflight evidence only for this portable alpha; it is not a full
 current-suite validation. The bounded AST adapter supports3.11/3.14, fails closed
 on unknown minors, and does not establish every Python>=3.11 combination. Linux,
@@ -315,3 +355,8 @@ The GitHub-only private vulnerability channel still needs actual activation chec
 No registry upload, external model call or remote publication is established by
 these local files. Source provenance records the attribution decision without
 certifying unknown third-party rights.
+
+## Documentation
+
+See [CONTRIBUTING](CONTRIBUTING.md) for installation/contribution and [CHANGELOG](CHANGELOG.md) for changes.
+[Host integration](docs/HOST.md) · [Skill](skills/agent-workflow/SKILL.md) · [Security](SECURITY.md) · [Upgrade/rollback](UPGRADING.md) · [Brand provenance](docs/BRAND.md).
