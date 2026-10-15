@@ -13,6 +13,8 @@
 
 **Local alpha · MIT © 2026 TIM · No third-party runtime dependencies**
 
+[![Alpha CI](https://github.com/cursoraikk-max/iterail/actions/workflows/local-alpha.yml/badge.svg?branch=main)](https://github.com/cursoraikk-max/iterail/actions/workflows/local-alpha.yml)
+
 A local evidence-driven workflow toolkit for running AI workers. CLI and stdio MCP
 share one Core, local SQLite task/run/event history, lease fencing and source-bound
 machine proof. The caller supplies an authorized running worker; MCP is a tool
@@ -285,16 +287,18 @@ lifecycle and MCP27 checks. Consult the source-bound release record for actual
 results; old passes never establish current acceptance. Python3.14 has
 compatibility preflight evidence only for this portable alpha; it is not a full
 current-suite validation. The bounded AST adapter supports3.11/3.14, fails closed
-on unknown minors, and does not establish every Python>=3.11 combination. Linux,
-Windows and other Python minor versions remain unverified; POSIX process-group
+on unknown minors, and does not establish every Python>=3.11 combination. Native Windows and other Python minor versions remain unverified; POSIX process-group
 behavior is not a Windows isolation guarantee. The configured CI matrix is GitHub-hosted `ubuntu-24.04` and `macos-14`, both
 Python3.11, on pushes/PRs to main and manual dispatch. Each job requires the full55
 portable gate plus wheel/sdist builds, isolated installs and real CLI/MCP smoke.
 It replaces the old self-hosted-only workflow. Only standard hosted runners are
 used; no repository secrets, model calls or publication. Build tools are downloaded
-from PyPI into a fresh job-local venv; runtime remains dependency-free. Local Mac
-results do not establish hosted Linux/macOS passes. Hosted results are pending;
-no passing badge is asserted. See [CI details](docs/CI.md).
+from PyPI into a fresh job-local venv; runtime remains dependency-free. Hosted run [38764121662](https://github.com/cursoraikk-max/iterail/actions/runs/38764121662)
+passed both Ubuntu24.04 and macOS14/Python3.11 jobs at commit
+`db16c160e3347d0db3ddd670142b3f1e7f7af0fd`, including all55 gates and both
+distribution install/MCP checks. This exact-commit result does not validate later
+changes, real host-client connection or model/provider integration. The badge
+tracks the latest main workflow result. See [CI details](docs/CI.md).
 
 To request a separately authorized full suite or repeat the installed local example:
 
@@ -353,7 +357,7 @@ The runtime supplies local import/dedupe, leases/events, source-bound verificati
 read-only guidance/context, quality assessments and durable caller-side intents.
 MCP and HostBridge do not launch platform agents themselves. Optional runner or
 provider adapters require separate explicit authorization; installing this package
-does not validate them. No hosted runner, production hostile isolation, unattended
+does not validate them. No hosted AI-worker service, production hostile isolation, unattended
 multi-day guarantee, GitHub/Discord/X feedback deployment, public reply or release
 is established. Future model routing, account usage/fee telemetry and host/provider
 validation remain open; byte reduction is not token savings or net cost evidence.
@@ -366,9 +370,9 @@ See [QUALITY](docs/QUALITY.md), [RESEARCH](docs/RESEARCH.md) and
 Read [CONTRIBUTING](CONTRIBUTING.md), [CHANGELOG](CHANGELOG.md),
 [SOURCE-PROVENANCE](docs/SOURCE-PROVENANCE.md) and [LICENSE](LICENSE).
 Keep failing tests/evidence, original authority and exact source binding; independent
-review is required rather than Agent self-attestation. This revision adds installation documentation and a local install helper; runtime code is unchanged. It adds
-no runtime feature or provider call. CI is configured; remote execution results
-must be checked on the exact tested commit. The MIT notice is
+review is required rather than Agent self-attestation. This iteration improves distribution timeout diagnostics and records the first
+hosted CI results; runtime code is unchanged. It adds no provider call. Later
+changes require new CI results on their exact commit. The MIT notice is
 updated to the owner-confirmed TIM attribution; its MIT grant terms are unchanged.
 The GitHub-only private vulnerability channel still needs actual activation checks.
 No registry upload, external model call or remote publication is established by
