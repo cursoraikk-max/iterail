@@ -35,6 +35,10 @@ main 的 PR 和手动触发。矩阵为 Ubuntu24.04/macOS14、Python3.11，不�
    requires timeout stdout/stderr and a failed command row with exit124, while
    preserving ordinary nonzero exit diagnostics. The checker reuses the installer's
    command recorder; timeouts do not guarantee isolation of an entire process tree.
+   `tests/packaging/worktree_project.py` also exercises the installed wheel in a
+   real Git linked worktree: CLI init/import/claim/change/verify/ready_review and
+   MCP status parity, plus broken gitfile/nested-root rejection and inherited Git
+   environment isolation. This uses local fixture repos, not a host client or AI.
 5. Official pinned upload-artifact retains scoped summaries/command logs for7 days,
    including failures; it excludes source copies, environments and state databases.
    GitHub stores normal CI logs/artifacts; this is not a package release.
