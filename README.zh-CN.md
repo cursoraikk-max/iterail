@@ -13,6 +13,8 @@
 
 **本地 alpha · MIT © 2026 TIM · 无运行时第三方依赖**
 
+[![Alpha CI](https://github.com/cursoraikk-max/iterail/actions/workflows/local-alpha.yml/badge.svg?branch=main)](https://github.com/cursoraikk-max/iterail/actions/workflows/local-alpha.yml)
+
 面向正在运行的 AI worker 的本地证据驱动工作流工具包。CLI 与 stdio MCP 共享同一 Core、
 SQLite 任务/run/事件历史、租约围栏与绑定源码的机器证明。调用方提供已授权的 worker；
 MCP 是工具接口，不是调度器或模型。任务文字只是数据，不能授予权限。
@@ -258,12 +260,14 @@ stdio 子进程测试不是具体外部客户端已配置的证明。
 55个无跳过的嵌套单元用例。本次隐私修订使用便携55条门禁与定向 wheel/sdist 安装、真实无模型任务生命周期及 MCP27
 检查；实际结果以绑定当前源码的发布记录为准，不能冒用旧版本通过结果。对于该便携 alpha，Python3.14
 只有兼容预检证据，不代表当前完整套件已验证。AST 适配仅支持3.11/3.14，未知 minor 拒绝；
-不能据此保证全部 Python>=3.11 组合。Linux、Windows 与其他 Python minor 均未验证；
+不能据此保证全部 Python>=3.11 组合。原生 Windows 与其他 Python minor 均未验证；
 POSIX 进程组行为不代表 Windows 隔离保证。已配置 GitHub 托管 `ubuntu-24.04` / `macos-14`、Python3.11 矩阵，main 的
 push/PR 及手动触发均执行完整55门禁、wheel/sdist 构建、独立安装和真实 CLI/MCP 冒烟。
 该配置替换旧 self-hosted 工作流，只用标准托管 runner，不用仓库密钥、不调用模型、不发布。
-构建工具从 PyPI 下载至全新 job venv，运行时仍无第三方依赖。本地 Mac 通过不代表托管
-Linux/macOS 通过；远端结果待确认，暂不添加通过徽章。见 [CI 说明](docs/CI.md)。
+构建工具从 PyPI 下载至全新 job venv，运行时仍无第三方依赖。[远端运行38764121662](https://github.com/cursoraikk-max/iterail/actions/runs/38764121662)
+已在准确提交 `db16c160e3347d0db3ddd670142b3f1e7f7af0fd` 上通过 Ubuntu24.04 和
+macOS14/Python3.11 两个 job，包括完整55门禁与两条分发安装/MCP 检查。该结果不代表
+后续修改、真实宿主客户端或模型/provider 集成已验证。徽章跟踪 main 最新工作流结果。见 [CI 说明](docs/CI.md)。
 
 在另外得到授权后，可运行完整套件，或重跑已安装的本地示例：
 
@@ -309,7 +313,7 @@ owner 已批准发布此精简源码仓库；注册表上传、付费服务和�
 
 运行时提供本地导入/去重、租约/事件、绑定源码的验证、只读指导/上下文、质量评估和持久调用方意图。
 MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider 适配须另有明确授权，安装不证明
-这些接入已验证。尚未建立托管 runner、生产恶意隔离、无人值守多日保证、GitHub/Discord/X 反馈
+这些接入已验证。尚未建立托管 AI worker 服务、生产恶意隔离、无人值守多日保证、GitHub/Discord/X 反馈
 部署、公开回复或发布。模型路由、账户用量/费用遥测与 host/provider 验证仍待完成；字节减少不是
  token 节省或净费用证据。见[质量](docs/QUALITY.md)、[调研](docs/RESEARCH.md)与
 [策略](docs/STRATEGY.md)。本地 accepted 任务不代表所有目标完成。
@@ -319,8 +323,8 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 
 阅读[贡献指南](CONTRIBUTING.md)、[变更记录](CHANGELOG.md)、
 [源码来源](docs/SOURCE-PROVENANCE.md)和[许可证](LICENSE)。保留失败测试与证据、原权限和准确
-源码绑定；需要独立审查，不能靠 Agent 自报。本次新增安装辅助脚本与文档，运行时代码未改；没有新增 runtime 能力、provider 调用
-；CI 已配置，远端结果须核对准确提交。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
+源码绑定；需要独立审查，不能靠 Agent 自报。本轮改进分发检查的超时诊断并记录首次托管 CI 结果，运行时代码未改，没有新增 provider 调用。
+后续修改仍须核对准确提交的 CI 结果。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
 渠道仍须实际检查启用状态。本地文件不证明注册表上传、外部模型调用或远端发布已经发生。
 来源文档记录署名决定，但不据此认证未知第三方权利。
 
