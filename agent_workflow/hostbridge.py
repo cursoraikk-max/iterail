@@ -4,6 +4,7 @@ No platform or model is called here. A committed ticket is not execution evidenc
 only Core history and independent owner receipts can reconcile the result.
 """
 import re
+import time
 from pathlib import Path
 from .continuation import absolute, digest, encoded, hash_value, load, regular, require, sha
 from .diagnostics import validate_host_request
@@ -24,6 +25,8 @@ class HostBridge:
     def _public(entry):
         keys = ('request_id', 'kind', 'dispatch_key', 'actor', 'phase', 'task_id', 'run_id', 'dispatch_started')
         result = {key: entry[key] for key in keys}
+        for key in ('retry_of', 'replacement_request_id'):
+            if key in entry: result[key] = entry[key]
         if entry['receipt_sha256'] is not None: result['receipt_sha256'] = entry['receipt_sha256']
         return result
 
@@ -97,7 +100,14 @@ class HostBridge:
                 raise ValueError('actual Core outcome exists; reconcile without dispatch')
             task = self.c._core('status', {'task_id': entry['task_id']}, version)
             guidance = self.c._core('next_step', {'task_id': entry['task_id']}, version)
-            require(task['state'] == 'queued' and digest(Path(self.c.policy['repo'])) == entry['packet']['source_sha256'], 'current queued request source required before dispatch')
+            retry = entry.get('retry_of')
+            if retry is not None:
+                previous = self._get(retry)
+                require(previous['phase'] == 'expired' and previous.get('replacement_request_id') == request_id,
+                        'exact expired predecessor required')
+                self._expired_worker(previous)
+            require((task['state'] == 'queued' or retry is not None)
+                    and digest(Path(self.c.policy['repo'])) == entry['packet']['source_sha256'], 'current queued request source required before dispatch')
             quality = guidance.get('quality')
             require((quality is not None and quality['claim_allowed'] and quality['next_task_id'] == entry['task_id'])
                     or (quality is None and guidance['next_action'] == 'claim'), 'current Core admission required before dispatch')
@@ -109,6 +119,68 @@ class HostBridge:
             self.c._quality_identity(entry['packet'], version)
         after = self._commit(entry, {'phase': 'executing', 'dispatch_started': True}, 'host_dispatch_begun', pending=True)
         return {**self._public(after), 'packet': entry['packet']}
+
+    def _expired_worker(self, entry):
+        """Observe only: Core's normal claim owns lease expiry and task requeue."""
+        version = entry['version']
+        self.c._core_policy(); self.c._runtime(version)
+        matches = self._matches(entry)
+        require(entry['kind'] == 'worker' and len(matches) == 1
+                and matches[0]['id'] == entry['run_id'], 'exact expired worker outcome required')
+        run = self.c._core('status', {'run_id': entry['run_id']}, version)
+        require(run['state'] in {'running', 'changed', 'verifying', 'verified', 'ready_review', 'expired'}
+                and time.time() >= run['lease_until'], 'expired worker outcome required')
+        active = self.c._core_read("SELECT id FROM runs WHERE state IN ('running','changed','verifying','verified','ready_review') AND lease_until>?", (time.time(),))
+        require(not active, 'existing Core checkout lease requires reconciliation')
+        latest = self.c._core_read('SELECT id FROM runs WHERE task_id=? ORDER BY rowid DESC LIMIT 1', (entry['task_id'],))
+        require(latest and latest[0]['id'] == run['id'], 'newer Core outcome requires reconciliation')
+        require(digest(Path(self.c.policy['repo'])) == entry['packet']['source_sha256'],
+                'unchanged request source required for retry')
+        guidance = self.c._core('next_step', {'run_id': run['id']}, version)
+        quality = guidance.get('quality')
+        require(guidance['run_id'] == run['id'] and guidance['next_action'] == 'claim'
+                and (quality is None or quality['claim_allowed'] and quality['next_task_id'] == entry['task_id']),
+                'current Core retry admission required')
+        return run
+
+    def retry_expired(self, request_id):
+        """Retire one proven expired worker intent and charge a fresh request pair.
+
+        No dispatcher is called, old identity is never rebound, and no budget is
+        refunded. The single ledger transaction also makes lost replies replayable.
+        """
+        with self.c._locked():
+            row = self.c._row()
+            require(self.c._gate(row) is None, 'original continuation stopped or expired')
+            entry = self._get(request_id)
+            if entry['phase'] == 'expired':
+                replacement = self._get(entry['replacement_request_id'])
+                require(replacement.get('retry_of') == request_id, 'retry history identity changed')
+                return self._public(replacement)
+            self._pending(entry, row)
+            require(entry['kind'] == 'worker' and entry['phase'] in {'bound', 'expired_pending'},
+                    'reconciled expired worker required before retry')
+            version = entry['version']
+            self._expired_worker(entry)
+            require(row['requests_spent'] + 2 <= self.c.policy['budget']['max_requests'],
+                    'owner request ceiling cannot reserve retry worker and independent review')
+            require(self.c._gate(self.c._row()) is None, 'original continuation stopped or expired')
+            packet = self.c._packet('worker', entry['task_id'], None, version, entry['packet']['source_sha256'])
+            key = self._key(packet)
+            replacement = {'request_id': packet['id'], 'kind': 'worker', 'dispatch_key': key,
+                           'actor': 'host-'+key[:32], 'phase': 'reserved', 'task_id': entry['task_id'],
+                           'run_id': None, 'dispatch_started': False, 'packet': packet, 'version': version,
+                           'receipt_sha256': None, 'finish': None, 'retry_of': request_id}
+            retired = {**entry, 'phase': 'expired', 'replacement_request_id': packet['id']}
+            with self.c._tx():
+                self.c.db.execute('UPDATE host_dispatch SET body=? WHERE request_id=?', (encoded(retired).decode(), request_id))
+                self.c.db.execute('INSERT INTO host_dispatch VALUES(?,?)', (packet['id'], encoded(replacement).decode()))
+                self.c.db.execute('UPDATE meta SET requests_spent=requests_spent+2,request=?,phase=?,reason=?,failure_count=0 WHERE id=1',
+                                  (encoded(packet).decode(), 'worker_requested', 'fresh charged retry after proven worker expiry'))
+                self.c._event('host_expired_worker_retired', self._public(retired))
+                self.c._event('worker_pair_reserved', packet)
+                self.c._event('host_retry_reserved', self._public(replacement))
+            return self._public(replacement)
 
     def _promoted(self, entry):
         intent = entry['finish']
@@ -129,13 +201,22 @@ class HostBridge:
     def reconcile(self, request_id):
         # A completed row describes a historical effect, not current source quality.
         with self.c._locked(): entry = self._get(request_id)
-        if entry['phase'] in {'completed', 'rejected'}: return self._public(entry)
+        if entry['phase'] in {'completed', 'rejected', 'expired'}: return self._public(entry)
         if entry['kind'] == 'review' and self._promoted(entry):
             return self._public(self._commit(entry, {'phase': 'completed'}, 'host_promotion_recovered', live=False))
         entry, row = self._snapshot(request_id)
         self.c._core_policy(); self.c._runtime(entry['version'])
         if entry['kind'] == 'worker':
-            if entry['phase'] == 'bound': return self._public(entry)
+            if entry['phase'] in {'bound', 'expired_pending'}:
+                run = self.c._core('status', {'run_id': entry['run_id']}, entry['version'])
+                require(run['task_id'] == entry['task_id'] and run['worker'] == entry['actor']
+                        and run['baseline'] == entry['packet']['source_sha256']
+                        and run['workflow'] == entry['packet']['package_sha256'], 'bound worker identity changed')
+                if (run['state'] in {'running', 'changed', 'verifying', 'verified', 'ready_review', 'expired'}
+                        and time.time() >= min(run['lease_until'], run['deadline'])):
+                    if entry['phase'] != 'expired_pending':
+                        entry = self._commit(entry, {'phase': 'expired_pending'}, 'host_worker_expiry_observed')
+                return self._public(entry)
             matches = self._matches(entry)
             if len(matches) != 1:
                 return self._public(self._commit(entry, {'phase': 'uncertain'}, 'host_outcome_uncertain'))
@@ -145,6 +226,13 @@ class HostBridge:
                         and pending['source_sha256'] == entry['packet']['source_sha256'], 'observed review identity changed')
             else:
                 self._pending(entry, row)
+                run = self.c._core('status', {'run_id': run_id}, entry['version'])
+                if (run['state'] in {'running', 'changed', 'verifying', 'verified', 'ready_review', 'expired'}
+                        and time.time() >= min(run['lease_until'], run['deadline'])):
+                    # Lost bind reply: retain historical identity without claiming
+                    # that an already expired lease has become active again.
+                    return self._public(self._commit(entry, {'phase': 'expired_pending', 'run_id': run_id},
+                                                     'host_worker_expiry_observed', pending=True))
                 self.c.bind_run(request_id, run_id)
             return self._public(self._commit(entry, {'phase': 'bound', 'run_id': run_id}, 'host_actual_run_reconciled'))
         if entry['kind'] == 'quality_review' and entry['dispatch_started'] is True:
