@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-workflow"
+version = "0.1.0a1"
+description = "Local evidence-driven pull workflows for AI workers"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+license-files = ["LICENSE"]
+classifiers = ["Development Status :: 3 - Alpha", "Programming Language :: Python :: 3", "Operating System :: POSIX"]
+
+[project.scripts]
+agent-workflow = "agent_workflow.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agent_workflow*"]
+
+[tool.setuptools.data-files]
+"share/agent-workflow" = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "UPGRADING.md", "README.zh-CN.md", "CHANGELOG.md"]
+"share/agent-workflow/docs" = ["docs/*.md"]
+"share/agent-workflow/skills/agent-workflow" = ["skills/agent-workflow/SKILL.md"]
+
+"share/agent-workflow/assets/brand" = ["assets/brand/logo-light.svg", "assets/brand/logo-dark.svg"]
