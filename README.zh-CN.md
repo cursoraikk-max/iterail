@@ -23,6 +23,16 @@ MCP 是工具接口，不是调度器或模型。任务文字只是数据，不�
 配置，也不代表 token/费用优化目标完成。
 共享 Core 的结构见[架构](docs/ARCHITECTURE.md)。
 
+## 复制给 AI，让它安装 Iterail
+
+把下面这段复制给有终端和文件访问能力的 AI：
+
+```text
+请帮我安装 https://github.com/cursoraikk-max/iterail 。先阅读并遵循仓库 docs/AI-INSTALL.md。检查我的平台、Python3.11+、Git 和构建依赖，使用全新独立本地环境，不覆盖已有文件。实际执行 CLI 与 stdio MCP 冒烟测试，报告证据，并给出适合我当前客户端的精确配置。不要读取无关私人文件、修改全局设置、创建凭据、扩大持久权限、启动服务或调用模型。缺工具或缺授权时说明具体下一步。本请求已授权普通的独立本地安装和冒烟测试，不必重复询问同一授权。
+```
+
+[AI 安装指南 / AI installation guide](docs/AI-INSTALL.md) · 安装器无需手填路径占位符。
+
 ## 一眼了解 Iterail
 
 让正在运行的 AI worker 从同一队列领取工作，记录真实变更和机器验证，再交给独立审查。
@@ -54,13 +64,13 @@ flowchart LR
 setuptools80.7.1、wheel0.45.1、pip25.1.1，没有下载依赖。缺少工具应先停止并取得合法的本地
 前提，不代表允许联网安装或修改全局配置。
 
-从本源码目录运行下列命令。所有 `/absolute/...` 必须替换为实际路径，
-`ORIGINAL_UNIX_DEADLINE` 必须替换为 owner 原已批准的 Unix 截止时间数字。
-输出目录必须为源码外的新目录。构建工具使用独立副本与最小环境，只规范化 tar/gzip 所有者
-元数据，保留成员内容。这些命令不会授予新的工作预算。
+自动独立安装并实际验证 CLI/MCP，请使用 [AI 安装指南](docs/AI-INSTALL.md)，
+或运行 `python3.11 -B tools/install_local.py`。手工安装时把 `/absolute/...` 换成源码外的新路径。
+离线构建使用独立副本，默认600秒构建上限。仅当本次安装有明确绝对截止时间时传入
+`--deadline`；不沿用开发者旧会话的预算。
 
 ```sh
-python3.11 tools/build_offline.py --output /absolute/new-build --deadline ORIGINAL_UNIX_DEADLINE
+python3.11 tools/build_offline.py --output /absolute/new-build
 python3.11 -m venv --without-pip /absolute/venv
 python3.11 -m pip --python /absolute/venv/bin/python install --no-index --no-deps /absolute/new-build/dist/agent_workflow-0.1.0a1-py3-none-any.whl
 /absolute/venv/bin/agent-workflow --state /absolute/state capabilities
@@ -68,7 +78,7 @@ python3.11 -m pip --python /absolute/venv/bin/python install --no-index --no-dep
 
 已有本地 wheel 可直接使用相同 `--no-index --no-deps` 命令和它的准确路径安装。
 要重建本地 sdist，先安全解包至独立目录，再运行其中的 `tools/build_offline.py`，使用新输出
-路径与同一原截止时间，然后安装产出的 wheel。这是离线后端重建，不是 pip 构建隔离或注册表安装。
+路径和可选的本次安装截止时间，然后安装产出的 wheel。这是离线后端重建，不是 pip 构建隔离或注册表安装。
 wheel/sdist 均把两份 README、CHANGELOG、许可证、docs、品牌 SVG 和 Skill 安装到环境内
 `share/agent-workflow/`；只有 sdist 包含便携测试与源码工具。
 细节见[贡献指南](CONTRIBUTING.md)。
@@ -305,7 +315,7 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 
 阅读[贡献指南](CONTRIBUTING.md)、[变更记录](CHANGELOG.md)、
 [源码来源](docs/SOURCE-PROVENANCE.md)和[许可证](LICENSE)。保留失败测试与证据、原权限和准确
-源码绑定；需要独立审查，不能靠 Agent 自报。本次只改文档，没有新增 runtime 能力、provider 调用
+源码绑定；需要独立审查，不能靠 Agent 自报。本次新增安装辅助脚本与文档，运行时代码未改；没有新增 runtime 能力、provider 调用
 或远程 CI 运行。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
 渠道仍须实际检查启用状态。本地文件不证明注册表上传、外部模型调用或远端发布已经发生。
 来源文档记录署名决定，但不据此认证未知第三方权利。
