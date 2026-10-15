@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "project": {
+    "id": "example-project",
+    "kind": "target",
+    "purpose": "Owner-defined project purpose",
+    "goals": [
+      "Owner-defined acceptance goal"
+    ],
+    "non_goals": [
+      "Unapproved publication"
+    ],
+    "needs": [
+      {
+        "id": "runtime",
+        "kind": "dependency",
+        "name": "Owner-selected runtime",
+        "current": "Owner-verified version"
+      }
+    ]
+  },
+  "repo": "/absolute/clean/target-checkout",
+  "backend": "/absolute/project-local/node_modules/.bin/codex",
+  "backend_adapter": {
+    "kind": "codex_exec",
+    "argv": [],
+    "protocol": "exec-v1"
+  },
+  "checks": [
+    {
+      "id": "owner-check",
+      "argv": [
+        "/absolute/trusted-check",
+        "{repo}"
+      ],
+      "repair": "Fix the independently reproduced owner check; preserve tests and permissions.",
+      "finding_contract": "strict-v1"
+    }
+  ],
+  "tests": [
+    [
+      "/absolute/trusted-tests",
+      "{repo}"
+    ]
+  ],
+  "health": [
+    [
+      "/absolute/trusted-health",
+      "{repo}"
+    ]
+  ],
+  "allowlist": [
+    "src/*.js"
+  ],
+  "budget": {
+    "max_calls": 12,
+    "call_seconds": 360,
+    "wall_seconds": 28800,
+    "log_bytes": 1048576,
+    "max_attempts": 3
+  },
+  "poll_seconds": 30,
+  "self_update": [],
+  "idle": {
+    "initial_seconds": 30,
+    "max_seconds": 900
+  },
+  "breakers": {
+    "same_class_failures": 2,
+    "no_gain_cycles": 2
+  },
+  "execution_mode": "provider",
+  "provider_authorized": false,
+  "strategy_catalog": null,
+  "strategy_catalog_sha256": null
+}
