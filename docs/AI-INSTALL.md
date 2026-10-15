@@ -126,7 +126,13 @@ Git repository/configuration created only for installation tests. It is ready fo
 a client connection check, **not a production queue**. For real tasks, derive `repo` from the chosen Git
 checkout and test argv from that project's trusted commands using the installed
 interpreter (never blindly use the example's Homebrew path). Follow README's
-initialization instructions and config schema. Do not import tasks or execute
+initialization instructions and config schema. A linked Git worktree can be selected
+directly: its `.git` is normally a file, and initialization verifies that root
+using a bounded read-only Git query. Do not replace its `.git` file or run `git init`
+over it. Broken gitfiles and nested directories inheriting a parent checkout are
+rejected. Worktree metadata may refer to the same repository's Git administration
+directory outside the selected worktree; no credentials or user Git config are
+needed. This is not permission to read unrelated projects. Do not import tasks or execute
 project tests without the user's project scope. After initializing the real state, update the fragment to that exact state path.
 One shared state path must be used
 by CLI and MCP. Installation smoke proves transport/tool consistency, not project
@@ -142,6 +148,8 @@ expansion is part of installation.
 按当前客户端官方说明转换，不把 JSON 填进 TOML。优先项目级配置，保留原内容，
 全局配置不在普通安装授权内。需要重载/客户端批准就明确剩余步骤，不能宣称已连接。
 正式任务另需可信项目配置；CLI/MCP 使用同一 state，不能把 smoke 数据库当正式队列。
+可直接选择合法 Git linked worktree；其 `.git` 文件由只读 Git 查询验证，不能覆盖或
+重新 `git init`。只读取同一仓库关联的 Git 管理元数据，不需要凭据或用户 Git 配置。
 Skill 可直接读取；持久全局安装须有对应授权。
 
 ## 5. Completion report / 完成报告
