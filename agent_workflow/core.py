@@ -63,7 +63,22 @@ def validate_config(c):
     if not isinstance(c, dict) or not required <= set(c) or set(c)-required-{'producer_policy','uiux_policy','quality_policy'}:
         raise WorkflowError('config requires exactly ' + ', '.join(sorted(required)))
     repo = Path(c['repo']).resolve()
-    if not repo.is_dir() or not (repo / '.git').is_dir():
+    metadata = repo / '.git'
+    checkout = repo.is_dir() and metadata.is_dir()
+    if not checkout and repo.is_dir() and metadata.is_file() and not metadata.is_symlink():
+        # Linked worktrees use a gitfile. Verify the selected root with Git;
+        # do not inherit GIT_DIR/GIT_WORK_TREE, credentials or user Git settings.
+        environment = {'PATH': os.defpath + ':/opt/homebrew/bin:/usr/local/bin',
+                       'LC_ALL': 'C', 'GIT_CONFIG_GLOBAL': os.devnull,
+                       'GIT_CONFIG_NOSYSTEM': '1', 'GIT_OPTIONAL_LOCKS': '0'}
+        try:
+            result = subprocess.run(['git', '-C', str(repo), 'rev-parse', '--show-toplevel'],
+                                    env=environment, capture_output=True, text=True, timeout=10)
+            selected_root = result.stdout.rstrip('\r\n')
+            checkout = result.returncode == 0 and bool(selected_root) and Path(selected_root).resolve() == repo
+        except (OSError, ValueError, subprocess.TimeoutExpired):
+            checkout = False
+    if not checkout:
         raise WorkflowError('repo must be a local git checkout')
     if not isinstance(c['tests'], list) or not c['tests']:
         raise WorkflowError('tests must be a nonempty argv list')
