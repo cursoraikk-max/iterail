@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-labelledby="title desc">
+  <title id="title">Iterail</title>
+  <desc id="desc">A returning track advances into an upward arrow beside the Iterail wordmark.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="18">
+    <path d="M48 122c0-20 16-36 36-36h66c20 0 36 16 36 36s-16 36-36 36H84c-20 0-36-16-36-36Z" stroke="#101827"/>
+    <path d="M48 122c0-20 16-36 36-36h20" stroke="#4DE0B0"/>
+    <path d="M116 158h30" stroke="#4DE0B0"/>
+    <path d="m143 101 75-66m-28 0h28v28" stroke="#4DE0B0"/>
+  </g>
+  <rect x="32" y="43" width="24" height="24" rx="6" fill="#4DE0B0"/>
+  <text x="275" y="151" fill="#101827" font-family="Avenir Next, Helvetica Neue, Arial, sans-serif" font-size="132" font-weight="900" letter-spacing="-6">Iterail</text>
+</svg>
