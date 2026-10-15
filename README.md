@@ -25,6 +25,16 @@ registry availability is unverified. Publishing this alpha source does not insta
 a daemon, call a model, modify global client configuration or complete token/fee
 optimization goals. [Architecture](docs/ARCHITECTURE.md) explains the shared Core.
 
+## Let your AI install Iterail
+
+Copy this into an AI assistant with terminal and file access:
+
+```text
+Install Iterail from https://github.com/cursoraikk-max/iterail for me. Read and follow docs/AI-INSTALL.md in that repository first. Inspect my platform, Python3.11+, Git and build dependencies; use a new isolated local environment without overwriting existing files. Run the real CLI and stdio MCP smoke tests, report their evidence, and provide the exact configuration for my client. Do not read unrelated private files, modify global settings, create credentials, expand persistent permissions, start services or call models. If a required tool or authorization is missing, state the specific next action. Ordinary isolated local installation and smoke tests are authorized by this request.
+```
+
+[AI installation guide / AI 安装指南](docs/AI-INSTALL.md) · No manual path placeholders needed for the installer.
+
 ## Why Iterail
 
 Give running AI workers one queue, retain real changes and machine proof, then hand work to independent review.
@@ -57,14 +67,15 @@ setuptools>=77, wheel and pip. Actual local packaging used Python3.11,
 setuptools80.7.1, wheel0.45.1 and pip25.1.1; no dependency download was performed.
 Missing tools are a blocker, not permission to fetch or change global settings.
 
-From this source checkout, replace every `/absolute/...` path and
-`ORIGINAL_UNIX_DEADLINE` with the original owner-approved Unix deadline (a number).
-Output directories must be new and outside source. The build tool works in an owned
-copy, uses a minimal environment and normalizes only tar/gzip owner metadata while
-preserving member contents. Do not infer a fresh work budget from these commands.
+For an automated isolated install with real CLI/MCP checks, follow
+[the AI installation guide](docs/AI-INSTALL.md) or run `python3.11 -B tools/install_local.py`.
+For manual installation, replace `/absolute/...` with new local paths outside source.
+The offline builder uses an owned copy and a default600-second build cap. Supply
+`--deadline` only when the current installation has an explicit absolute deadline;
+no prior development conversation budget applies to a new installation.
 
 ```sh
-python3.11 tools/build_offline.py --output /absolute/new-build --deadline ORIGINAL_UNIX_DEADLINE
+python3.11 tools/build_offline.py --output /absolute/new-build
 python3.11 -m venv --without-pip /absolute/venv
 python3.11 -m pip --python /absolute/venv/bin/python install --no-index --no-deps /absolute/new-build/dist/agent_workflow-0.1.0a1-py3-none-any.whl
 /absolute/venv/bin/agent-workflow --state /absolute/state capabilities
@@ -73,7 +84,7 @@ python3.11 -m pip --python /absolute/venv/bin/python install --no-index --no-dep
 To use an already-built local wheel, use the same `--no-index --no-deps` install
 command with its exact path. To rebuild a local sdist, safely extract it to an owned
 directory and run its included `tools/build_offline.py` with a new output path and
-the same original deadline, then install the resulting wheel. This is an offline
+an optional current installation deadline, then install the resulting wheel. This is an offline
 backend rebuild, not pip build isolation or a registry installation. Wheel/sdist
 install README pair, CHANGELOG, license, docs, brand SVGs and Skill under
 `share/agent-workflow/` in the environment; only the sdist includes portable tests
@@ -348,7 +359,7 @@ See [QUALITY](docs/QUALITY.md), [RESEARCH](docs/RESEARCH.md) and
 Read [CONTRIBUTING](CONTRIBUTING.md), [CHANGELOG](CHANGELOG.md),
 [SOURCE-PROVENANCE](docs/SOURCE-PROVENANCE.md) and [LICENSE](LICENSE).
 Keep failing tests/evidence, original authority and exact source binding; independent
-review is required rather than Agent self-attestation. This doc-only revision adds
+review is required rather than Agent self-attestation. This revision adds installation documentation and a local install helper; runtime code is unchanged. It adds
 no runtime feature, provider call or remote CI run. The MIT notice is
 updated to the owner-confirmed TIM attribution; its MIT grant terms are unchanged.
 The GitHub-only private vulnerability channel still needs actual activation checks.
