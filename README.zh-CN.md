@@ -323,8 +323,8 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 
 阅读[贡献指南](CONTRIBUTING.md)、[变更记录](CHANGELOG.md)、
 [源码来源](docs/SOURCE-PROVENANCE.md)和[许可证](LICENSE)。保留失败测试与证据、原权限和准确
-源码绑定；需要独立审查，不能靠 Agent 自报。本轮改进分发检查的超时诊断并记录首次托管 CI 结果，运行时代码未改，没有新增 provider 调用。
-后续修改仍须核对准确提交的 CI 结果。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
+源码绑定；需要独立审查，不能靠 Agent 自报。本轮支持经验证的本地 Git worktree 项目，并新增真实 CLI/MCP 回归。Core 的 checkout 校验有所修改，
+强制验收、权限与预算仍保持执行，没有新增 provider 调用；本次运行时修订仍须核对准确提交的 CI 结果。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
 渠道仍须实际检查启用状态。本地文件不证明注册表上传、外部模型调用或远端发布已经发生。
 来源文档记录署名决定，但不据此认证未知第三方权利。
 
