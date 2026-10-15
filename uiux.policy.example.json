@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "project": {"id": "example-interface", "has_ui": true},
+  "artifact_root": "/absolute/owner/uiux-artifacts",
+  "standards": {
+    "users": ["Readers finding a document"],
+    "flows": [{"id": "home", "steps": ["Open home", "Find a document"]}],
+    "references": [{"id": "owner-reference", "uri": "https://owner.example/style"}],
+    "tokens": {"brand-color": "#123456", "spacing-unit": "8px"},
+    "viewports": [{"id": "small", "width": 390, "height": 844}],
+    "a11y": ["Visible keyboard focus", "Readable text contrast"]
+  },
+  "cadence": {"interval_seconds": 86400},
+  "limits": {"artifact_bytes": 1048576, "evidence_items": 32},
+  "rubric": [{"id": "flow", "minimum_score": 3}, {"id": "a11y", "minimum_score": 3}],
+  "approved_brand_changes": []
+}
