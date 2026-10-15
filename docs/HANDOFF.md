@@ -1,0 +1,19 @@
+# Budgeted context without transferring authority
+
+CLI and MCP use the same `handoff_build` and `handoff_read` ledger. Building requires an active sender run, its private fencing token, the exact claiming controller and a canonical failed verification event. A handoff changes neither run state nor lease ownership; a receiver cannot claim a still-leased checkout. The receiver needs a new legitimate claim and fresh verification, even when the bundle is current.
+
+```sh
+python3 -m agent_workflow --state /absolute/state handoff_build --args '{"run_id":"run-...","token":"PRIVATE_TOKEN","budget_bytes":"16384"}'
+python3 -m agent_workflow --state /absolute/state handoff_read --args '{"handoff_id":"handoff-..."}'
+python3 -m agent_workflow --state /absolute/state handoff_read --args '{"handoff_id":"handoff-...","include_stale":"true"}'
+```
+
+Keep tokens out of shell history and shared artifacts; the command above is an API shape, not a recommendation to paste a real credential. Handoffs omit all known lease tokens, including common JSON-escaped, Unicode, hex and base64 representations. Raw original machine evidence is preserved and identified by SHA; do not publish private state or raw logs. Arbitrary encryption/encoding is not a secret-detection guarantee under the shared OS user.
+
+Default output budget is 16 KiB, maximum 64 KiB. The bound measures default public JSON and conservatively includes ordinary CLI/MCP content framing plus a read-metadata reserve. A caller's arbitrary JSON-RPC request-ID size is outside this data budget. Mandatory fixed permissions, budget, acceptance, test argv and any producer-bound post-fix check are never silently truncated. Failure identity includes the task/run, baseline/candidate/controller/policy/revision, event sequence/SHA, failure fingerprint, actual command exits/errors and original retained raw-log references/SHA. A budget too small for these fields rejects the build.
+
+Within remaining bytes, sanitized failure-prefix previews precede untrusted task/notes and grouped facts/hypotheses/verified experience references. A whole `failure_prefixes` preview field may be omitted with a named budget reason when the previews cannot fit. Other optional fields may also be omitted with explicit markers; a missing preview does not delete its mandatory raw prefix reference. Core retention already caps streams at 65,536 bytes: `source_truncated` and total-byte metadata distinguish retained prefixes from complete output. No retained prefix is described as a true final output tail. Experience trust labels, expiry, omitted counts and stale metadata remain visible; experience cannot grant a command, permission or exemption from acceptance.
+
+Bundles expire after 24 hours and retain their original expiry on deduplicated builds. The ledger holds 128 bundles and 512 log files; exhaustion rejects explicitly. Reads check exact source/controller/revision, fixed rules/owner binding, canonical failure-event SHA, protected content-addressed log SHA, and current validity of any embedded experience references. Version drift, historical failure, incomplete producer proof, expiry or pollution marks stale. Default reads reject stale bundles; `include_stale:true` returns historical context with `requires_fresh_claim:true`, `requires_fresh_verify:true` and `ownership_transferred:false`. Polluted bundles/logs are quarantined; restoring bytes does not restore their trusted status. No old acceptance, review verdict or sender lease becomes authority for a new attempt.
+
+A native development failure from a physically frozen controller may be useful historical context, but candidate code must reject its active token if the controller digest differs. Use a separate owner-approved current-controller trial to exercise the product itself; do not relax fencing to make a demonstration work. Local trial failures and protocol fixtures are not development acceptance or external unattended AI success.
