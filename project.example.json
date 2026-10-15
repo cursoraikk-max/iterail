@@ -1,0 +1,8 @@
+{
+  "repo": "/absolute/checkout",
+  "tests": [["/opt/homebrew/bin/python3", "-m", "unittest", "discover", "-v"]],
+  "sources": ["local"],
+  "budget": {"lease_seconds": 1800, "run_seconds": 3600, "test_seconds": 60, "max_attempts": 3},
+  "acceptance": {"require_tests": true, "require_unchanged_candidate": true},
+  "permissions": {"execute_tests": true, "publish": false, "network": false}
+}
