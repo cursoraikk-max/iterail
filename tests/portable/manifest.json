@@ -1,0 +1,751 @@
+{
+  "schema_version": 1,
+  "core_commands": 53,
+  "supplements": 2,
+  "required_commands": 55,
+  "nested_unit_cases": 55,
+  "nested_unit_skips": 0,
+  "per_command_seconds": 90,
+  "files": {
+    "automation-trial/trusted/quality_boundary.py": "6ff533f234fcc9f2d195a542b1c9de8d96a3e492246ecf6465018230dc6082b0",
+    "automation-trial/trusted/quality_guard.py": "a3cd76380c36ce1c356eec11e0f8009a2c75a7d3ce30ee3dc0e5d90b4d869c0f",
+    "goal-trial/owner/core.json": "6b425df46260737fb53b09d96365d863a52c274ac7bfc70e51a48f6310771cfa",
+    "goal-trial/trusted/context_budget.py": "c6ecfe5dfe4a3a1048b14a276ed17df40b596d385025da28a5142469872644d9",
+    "phase1/trusted/so001.py": "973b6a06ceaa373acc62509517a270cfb6d38fe374895b675afdda129322c5aa",
+    "phase1/trusted/so002.py": "4909883d5f5486c96935073027c1c15c9682f15a203e6ee8faf83baf769b65f1",
+    "phase1/trusted/so003.py": "73ff5ec333a86fe34a62f0bd776d64dffa51a0200c68d2728c028642bb4e47ce",
+    "phase10/trusted/startup_block.py": "c18327ad1d68dec4e45dc4ee4ea166db5feca0a45bcd3db1f61afdbc496a5f47",
+    "phase10/trusted/startup_common.py": "ae46914e37f10325e6b15237cfcd722cb1310bab4abd7016055782d063678314",
+    "phase14/trusted/check.py": "41006b798a60ed4e3c9f8b40666d8d72de3c35541d664e2834fc3badcd95d60e",
+    "phase15/trusted/check.py": "abee6fe7a19e6f48f9553d8326b88998184aedf30e7dddc8720794f9cc79496f",
+    "phase2/evidence/final-receipt.json": "20ae928f80feeb65377315bfb1effb49bdd89356e6e9399ac3b66d4c8408f7a1",
+    "phase2/trusted/common.py": "a58ab2811f2ab10d6a07717cc6be4b5533cf4c0cf803767652a8dc4c4b5c398d",
+    "phase2/trusted/experience.py": "4cd94c4006f81b45fed3ebf8e0a40078990fa30eff22b5c80a23e10e8fea72ba",
+    "phase2/trusted/finding_wrapper.py": "9c3602f2ec6eb8676575e4bfbd0a4dea100cd86fc205b28ef3b2857485e4098b",
+    "phase2/trusted/handoff.py": "01c91ba19d6e65cb1a12110b03d407f9344fc5f283f2a189eca96bfb8b372e18",
+    "phase2/trusted/memory.py": "4cd94c4006f81b45fed3ebf8e0a40078990fa30eff22b5c80a23e10e8fea72ba",
+    "phase2/trusted/producer.py": "2894bc3cfb20a5348b24e70157a2db60084edf804cb81399071c853958926096",
+    "phase20/trusted/deadline.py": "c75225387a4d3abcf3725e4f2e261d0de613a28ed29fe9e5f30a18c14c34f3a2",
+    "phase20/trusted/semantic.py": "29a32c04b0120a2d7c2c64c417a03a23ebb919308c8370f2c666a4868aa22306",
+    "phase23/trusted/claim_docs.py": "7eb772a47ad89a221813d4d218a5c9fe42f86bc6c97eb8baeb4cfcf8fea466b2",
+    "phase25/trusted/capabilities_protocol_errors.py": "ecdfb10b98c807944f9155fdd3ffc7699fcf4b8d997ebbeedd523fbc20402783",
+    "phase25/trusted/guidance_protocol_errors.py": "e9e37a746e520a18d66ed6a84a9b342a6f293d11b88f505975e8bffa474b359c",
+    "phase25/trusted/protocol.py": "23670d1eb5dcc03f4473de4ba5b45a906a1ca6b7c38b40e06e3388335701664b",
+    "phase25/trusted/schema_supplement.py": "cb6d13679f33e1528da0b426b923a4c017712174871074a7c656adf7f4879848",
+    "phase25/trusted/uiux_protocol_errors.py": "6d5e9f03fde72bc5326a1ea268a2b5797aa395d1e7206aef0e5f6bfc98a3a8d3",
+    "phase25/trusted/unit_protocol_errors.py": "f958e3f31647dc789817922df757530fa9e5a35b7cc7a977b881fbc9b392cc17",
+    "phase3/trusted/appserver.py": "fe53f9ebb4967779520bce9fd1596065a60bb527d8dedae3c8dd1631a86bfeb4",
+    "phase3/trusted/common.py": "2b09d4b45ea0398b66a56590c7c47e960f3035c4dbbdc33272320a511bd301c3",
+    "phase3/trusted/context.py": "8b7ffa7da1e77c412d2d3b641901d02f862810954c2148dbfea7d9a90ec94672",
+    "phase3/trusted/strategy.py": "0789001e01d30ef9864539ccf9e9c5e7743cb10155fe33fd749f5e5480e412a9",
+    "phase4/trusted/common.py": "c0f604e908510453fcc831485cc0629fce88a3ce9b5a84c0631fd57d4fdb4fb0",
+    "phase4/trusted/evolution.py": "a2595ce33aad0b23593adf6337bfe5d06d104a5ded11a4a0cd3275fa0d1e5410",
+    "phase4/trusted/native_backend.py": "5c8534bf4a190d20f32616359386f6de4b38c7f1f975ef392d8282d449439ce5",
+    "phase4/trusted/target.py": "a88410bede2efdb6e93ae2622ec2848c290b7446ba1c1ead26c91dba2345d229",
+    "phase5/bridge-trusted/bridge-v2.py": "83675a01f4b529c7e77b7fdf846fde634dae73f33ffe6b0ca54cff0d5e50cef4",
+    "phase5/bridge-trusted/check.py": "ebb781bfb04d4fbbc452b59db881c859cdae71d5b4dc1667c582a0519bb71ce5",
+    "phase5/evidence/review-probes.py": "80835806e7c704f0c16c75199f95991b5d7619a07532c19bd56a978304c91b3b",
+    "phase5/scope-trusted/check.py": "9ebb0d3284a29f40f5355a4879106100e7436e5401dd83307bd707531eac0a79",
+    "phase5/trusted/check.py": "1944492d80cf3901ac2ceaa3c43d7861b880e53fbb280890968245e0a9d3e394",
+    "phase5/trusted/common.py": "c0f604e908510453fcc831485cc0629fce88a3ce9b5a84c0631fd57d4fdb4fb0",
+    "phase6/postexport-trusted/check.py": "a3d4633c743ec51fe63df1f2b625679a87f6bcf628be98d3af002c738680a853",
+    "phase6/supplemental-trusted/check.py": "356d7f0655e0d992420fa16afbbc4577c002003cc764cfc5e40ac78f69b0ffb1",
+    "phase6/trusted/check-v2.py": "6a4978bbc3c5d57e6bbd1d1a430eebe34cfa056737481d5528af3e1748ca0128",
+    "phase6/trusted/check.py": "c4436db9a05f210922e2449f26703aaa7989a963c0e518327eb329386989d415",
+    "phase7/audit/audit_common.py": "546b04ecea9f502a9606121c40e96b78cfb002aa87249dfa16014b6b5b4c67de",
+    "phase7/audit/boundary_snapshot.py": "9bf3cdc4b47f41888eb93815408fee3243ab0dc1dc977ff9284d7e62762f5372",
+    "phase7/audit/check_png.py": "d8e510e55870654a7f7e705c4d4472f0576bcaf6c6eb88c796447e206b1018e0",
+    "phase7/audit/check_restart_integrity.py": "555658d868ad3aea953782683d4e23bde689fcb591ff49eb2df16ad80f86c7fe",
+    "phase7/audit/png_review_probes.py": "2d923a8eaa921a7fb7eefcc4099b00f7c3c050245da980bca548afd678417aca",
+    "phase7/audit/preregistered_checks.py": "2435cde818a81eb0b7709dd54cac0398b98b7de22b0488c7746c8dab791f15d1",
+    "phase7/audit/reproduce_policy.py": "4cd35b8ebf873676eebfd46dd9e8fb1b9bba340dc0a19b65bfae87c0ca8500cf",
+    "phase7/audit/restart_review_probes.py": "56d59617e4c5c2a90b616aea918c8bba8065de725db631e905dd095b36360afb",
+    "phase7/audit/target_diagnostic.py": "40fe5929d85ccf6bd5aa627e981ff11cf8f5f9e01cbc0fb0c81435d78cc12a3a",
+    "phase8/audit/boundary.py": "c597967e286dd507a5a096b8674e3fc7a94c6673e6cab7d75926dd0fd03f30a2",
+    "phase8/audit/pending_backoff_check.py": "d6c8e39fb8361d0e77758749b28da76ca4ccefda06699bd73b5e4339e505bc78",
+    "phase8/trusted/check.py": "5b3a104920332a1dff551f7c426dd20a40858652a7b5d4451218fa97a719406b",
+    "phase9/trusted/evolution-metrics/CONTRACT.md": "1b49497239100fd2cea0857a2dcfdfd242fd70b9bed91b607c5c93055c9a4076",
+    "phase9/trusted/evolution-metrics/common.py": "ae46914e37f10325e6b15237cfcd722cb1310bab4abd7016055782d063678314",
+    "phase9/trusted/evolution-metrics/controller_backend.py": "e8a53e772e480671b525e6429dfde60da1e87d3164b3bff84d377b233586c9ba",
+    "phase9/trusted/evolution-metrics/controller_check.py": "a7e177903a3937bfbde5c49abb50d2bd302d5f6f270474f9d7bdf2d56433c45c",
+    "phase9/trusted/evolution-metrics/fixtures.py": "200b66c84f17000a12df7a4a02fe101f6b82f4f31b193fe1c61afc0729d5f91e",
+    "phase9/trusted/evolution-metrics/metrics.py": "e13bcbe80bd5959245ada7370a94cf187d912a7275930ef1e789bb986f47f937",
+    "phase9/trusted/evolution-metrics/native_backend.py": "5c8534bf4a190d20f32616359386f6de4b38c7f1f975ef392d8282d449439ce5",
+    "phase9/trusted/evolution-metrics/target_check.py": "beb6a637a28c1d9655923d3638f52f5ae643f8b0c33c4f86279a603090fb635b",
+    "phase9/trusted/producer-retry/baseline_metrics.py": "f836cd803b74c50be4cb3a374c06ab330d526557eb229703281cb4ab75fde40c",
+    "phase9/trusted/producer-retry/check.py": "a04da94c816959be1fe9667244c3202241ab030c1599fbec74cec28b166c8c07",
+    "research-trial/R10/design-review/budget_classification_guard.py": "0a242f75cc1e46628d94cd550af2fbb02195d0d6cd256d7a98b88f939f08c539",
+    "research-trial/R2/trusted/expired_quality_review_guard.py": "8932e1d82f5f66672dd8d72b3d4f9b5a9bbee2e5247db4cb3e78abb4840cff65",
+    "research-trial/R3/design-review/accepted_checkpoint_guard.py": "8d549c73bcff85ba7a440eb49f2e7d9721c9a4f10c6744e80ab5fd4d6f9e82ba",
+    "research-trial/R4/design-review/goal_scope_guard.py": "19ec8264097f787d14591db50484a0960369fa9898dc6d3252b90080fa30c1a1",
+    "research-trial/R5/design-review/late_bind_guard.py": "47086c214e2d8e0ed1888c2ef3710a45a01a039929140de46321de2522afbc1b",
+    "research-trial/R6/design-review/host_readiness_guard.py": "a71aa56bfe4f616cd258aaaea9c561e32d0dcf21f6ad7e248b44390f6eecd0ed",
+    "research-trial/R7/design-review/host_bridge_guard.py": "b7bb4199a199c5f72ab581362e87dfad319afb3ea88b45ba2e872611b36256f8",
+    "research-trial/R8/audit/semantic-current-version-probe.py": "db6c4989fcad99f4c4bde9424d5b7a95944f0661a77903adf38ba92f167bfe9f",
+    "research-trial/R8/design-review/semantic_review_guard.py": "ccb5e1d248b05ecd1fbe7b3097ac73cbb179b1555f50549825f5ec3f4cec7181",
+    "research-trial/R9/design-review/conditional_context_guard.py": "d365da90c5853465dc685c92fc5ded454f9f0a490c640f5ba409b7c0185c370b",
+    "research-trial/trusted/continuation_quality_guard.py": "e92999c54443332108cfae0c4eb56c6d4b264e400e224010a6fc39997aae7032",
+    "research-trial/trusted/research_boundary.py": "b9950fd9be25a4da54774d752d7bb832c595452e9d8f3e215a5cc90eab303e83",
+    "research-trial/trusted/research_guard.py": "bfff9ff101623aba49f5514c8372112444bda2e56d4fd69a55218a34bb5bb9e6",
+    "startup-errors/pre-session-a.log": "2d8b902fb51c4fb0108c58a40b037f3ed52641f00cdae67901d7cbda9b4b8473",
+    "startup-errors/pre-session-b.log": "2d8b902fb51c4fb0108c58a40b037f3ed52641f00cdae67901d7cbda9b4b8473",
+    "unattended/next-trusted-checks/check.py": "5dc031954bd48bfa3fe4ac0b4c482eacc206769102888a4105aa483aed014860",
+    "unattended/trusted-checks/common.py": "13db533878a9a8cfa14d9714daf3cf4463013d42a249cab8e710faa9814832a3",
+    "unattended/trusted-checks/orphan_guardian.py": "a471103da78439fec76e21f080e475c9ae2b03b4438615d3dc345bca8b3e5909",
+    "unattended/trusted-checks/output_cap.py": "6fed935439d4ae917d4df61344297f901abe7f40f186521b1cb1dee7c8f47a5b",
+    "unattended/trusted-checks/test_checks.py": "5150eac3579383f7f923eca1a947dff106c6791f551ac2577fed56c9804ab56a"
+  },
+  "commands": [
+    {
+      "id": "core-01",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase25/trusted/unit_protocol_errors.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-02",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase1/trusted/so001.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-03",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase1/trusted/so002.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-04",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase1/trusted/so003.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-05",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase2/trusted/producer.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-06",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase2/trusted/memory.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-07",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase2/trusted/handoff.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-08",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/unattended/next-trusted-checks/check.py",
+        "import-body",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-09",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/unattended/next-trusted-checks/check.py",
+        "boolean-policy",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-10",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/unattended/trusted-checks/orphan_guardian.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-11",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/unattended/trusted-checks/output_cap.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-12",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase3/trusted/appserver.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-13",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase3/trusted/context.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-14",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase3/trusted/strategy.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-15",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "{fixtures}/phase4/trusted/evolution.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-16",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase20/trusted/semantic.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-17",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase5/trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-18",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase25/trusted/uiux_protocol_errors.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-19",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase5/bridge-trusted/bridge-v2.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-20",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase5/scope-trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-21",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase5/evidence/review-probes.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-22",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase6/trusted/check-v2.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-23",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase6/supplemental-trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-24",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase6/postexport-trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-25",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase7/audit/check_png.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-26",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase7/audit/check_restart_integrity.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-27",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase8/trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-28",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase8/audit/pending_backoff_check.py",
+        "{source}",
+        "{fixtures}/phase8/trusted/check.py",
+        "{fixtures}/phase5/trusted/common.py"
+      ]
+    },
+    {
+      "id": "core-29",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase10/trusted/startup_block.py",
+        "{source}",
+        "{fixtures}/phase4/trusted/common.py",
+        "{fixtures}/startup-errors/pre-session-a.log",
+        "{fixtures}/startup-errors/pre-session-b.log",
+        "{fixtures}/phase10/trusted/startup_common.py"
+      ]
+    },
+    {
+      "id": "core-30",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase9/trusted/producer-retry/check.py",
+        "{source}",
+        "{fixtures}/phase9/trusted/producer-retry/baseline_metrics.py"
+      ]
+    },
+    {
+      "id": "core-31",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase9/trusted/evolution-metrics/metrics.py",
+        "{source}",
+        "{fixtures}/phase9/trusted/evolution-metrics/CONTRACT.md",
+        "{fixtures}/phase9/trusted/evolution-metrics/common.py",
+        "{fixtures}/phase9/trusted/evolution-metrics/controller_backend.py",
+        "{fixtures}/phase9/trusted/evolution-metrics/controller_check.py",
+        "{fixtures}/phase9/trusted/evolution-metrics/fixtures.py",
+        "{fixtures}/phase9/trusted/evolution-metrics/native_backend.py",
+        "{fixtures}/phase9/trusted/evolution-metrics/target_check.py"
+      ]
+    },
+    {
+      "id": "core-32",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase14/trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-33",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase15/trusted/check.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-34",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase25/trusted/capabilities_protocol_errors.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-35",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase20/trusted/deadline.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-36",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase25/trusted/guidance_protocol_errors.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-37",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase23/trusted/claim_docs.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-38",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase25/trusted/protocol.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-39",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/phase25/trusted/schema_supplement.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-40",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/goal-trial/trusted/context_budget.py",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-41",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/automation-trial/trusted/quality_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-42",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/automation-trial/trusted/quality_boundary.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-43",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/trusted/research_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-44",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/trusted/research_boundary.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-45",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/trusted/continuation_quality_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-46",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R2/trusted/expired_quality_review_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-47",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R3/design-review/accepted_checkpoint_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-48",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R4/design-review/goal_scope_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-49",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R5/design-review/late_bind_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-50",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R6/design-review/host_readiness_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-51",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R7/design-review/host_bridge_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-52",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R8/design-review/semantic_review_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "core-53",
+      "kind": "core",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R9/design-review/conditional_context_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "version-supplement",
+      "kind": "supplement",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R8/audit/semantic-current-version-probe.py",
+        "--repo",
+        "{source}"
+      ]
+    },
+    {
+      "id": "budget-supplement",
+      "kind": "supplement",
+      "argv": [
+        "{python}",
+        "-B",
+        "{fixtures}/research-trial/R10/design-review/budget_classification_guard.py",
+        "--repo",
+        "{source}"
+      ]
+    }
+  ],
+  "supplement_expected": {
+    "version-supplement": {
+      "passed": true,
+      "source_unchanged": true,
+      "same_source_and_package": true,
+      "different_current_physical_version": true,
+      "acknowledged_old_semantic_event": false,
+      "reconciliation_error": "ContinuationError: current physical semantic review version required",
+      "same_original_resources": true,
+      "resolver_replayed": false,
+      "db_tampering": false,
+      "native_fixture": true,
+      "controlled_outer_reply_loss": true,
+      "model_calls": 0
+    },
+    "budget-supplement": {
+      "passed": true,
+      "checks": [
+        "real pair spent2/max2 plus fresh unresolved wait_review reports exact budget blocker across ticks/restart/Bridge refusal without new work or reservation",
+        "real pinned policy and physical runtime drift stay integrity blocked even when budget exhausted; restoration restores budget reason only",
+        "insufficient worker pair capacity is typed budget block and never partly reserves",
+        "available single semantic slot reserves normally; already-paid pending request remains observable at exhausted ceiling",
+        "owner stop and original expired deadline retain precedence without refund reset or renewal"
+      ],
+      "native_local_fixture": true,
+      "actual_agent_dispatch": false,
+      "db_tampering": false,
+      "original_ledgers_modified": false,
+      "model_calls": 0,
+      "network_calls": 0
+    }
+  },
+  "derived_data_provenance": {
+    "goal-trial/owner/core.json": {
+      "purpose": "neutral inert owner-config input for context-budget regression; command count/order, budgets, acceptance and permissions preserved",
+      "fixture_prefix": "/portable-fixture/isolated-workspace-root",
+      "interpreter_placeholder": "/portable-fixture/python-runtime/bin/python3",
+      "sha256": "6b425df46260737fb53b09d96365d863a52c274ac7bfc70e51a48f6310771cfa"
+    }
+  },
+  "additional_data_provenance": {
+    "phase2/evidence/final-receipt.json": {
+      "purpose": "Inert mocked-local regression receipt consumed by unchanged strategy history-integrity contract; not current acceptance or model evidence",
+      "sha256": "20ae928f80feeb65377315bfb1effb49bdd89356e6e9399ac3b66d4c8408f7a1"
+    }
+  },
+  "ast_schema_compatibility": {
+    "commands": [
+      "core-16",
+      "core-35"
+    ],
+    "adapter_sha256": "f7eb13bf71a9317b07f2987b15d867c5331eab628b396b0ccff6b1f5b3da8001",
+    "known_python_minors": [
+      "3.11",
+      "3.14"
+    ],
+    "original_scripts_unchanged": true,
+    "replacement": "exactly one ASSERTIONS_AST_SHA literal; fixed version map only",
+    "normalized_structure_sha256": "b71b07790c2c9af90bcbd975dc24c51df3cca66e87b29ff6dedc9f23833f3e29"
+  },
+  "synthetic_startup_data_provenance": {
+    "startup-errors/pre-session-a.log": {
+      "purpose": "minimal synthetic pre-session failure contract input, not historical output or external AI evidence",
+      "sha256": "2d8b902fb51c4fb0108c58a40b037f3ed52641f00cdae67901d7cbda9b4b8473"
+    },
+    "startup-errors/pre-session-b.log": {
+      "purpose": "minimal synthetic pre-session failure contract input, not historical output or external AI evidence",
+      "sha256": "2d8b902fb51c4fb0108c58a40b037f3ed52641f00cdae67901d7cbda9b4b8473"
+    }
+  },
+  "fixture_count": 87,
+  "unchanged_fixture_count": 83,
+  "synthetic_startup_fixture_count": 2,
+  "adapted_startup_script_count": 1
+}
