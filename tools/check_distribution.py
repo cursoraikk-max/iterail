@@ -3,11 +3,12 @@
 import argparse
 import email
 import json
+import os
 from pathlib import Path
-import subprocess
 import sys
 import tarfile
 import zipfile
+from install_local import run_command
 
 
 def main():
@@ -24,15 +25,7 @@ def main():
     commands = []
 
     def run(label, argv, cwd):
-        result = subprocess.run([str(x) for x in argv], cwd=cwd, capture_output=True,
-                                text=True, timeout=900)
-        (out / (label + '.stdout')).write_text(result.stdout)
-        (out / (label + '.stderr')).write_text(result.stderr)
-        commands.append({'label': label, 'exit_code': result.returncode})
-        (out / 'commands.json').write_text(json.dumps(commands, indent=2) + '\n')
-        if result.returncode:
-            raise RuntimeError(label + ' failed; inspect logs in ' + str(out))
-        return result.stdout
+        return run_command(cwd, commands, dict(os.environ), label, argv, limit=900)
 
     def install(source, label):
         target = out / label
