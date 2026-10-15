@@ -46,7 +46,9 @@ jobs:
       - name: Wheel and sdist install with real CLI and MCP smoke
         run: |
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/distribution_diagnostics.py
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/gitfile_validation.py
           "$RUNNER_TEMP/build-venv/bin/python" -B tools/check_distribution.py --output "$RUNNER_TEMP/distribution"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/gitfile_validation.py --installed
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/worktree_project.py --python "$RUNNER_TEMP/distribution/wheel/venv/bin/python" --installed
       - name: Retain scoped verification evidence
         if: always()
