@@ -1,0 +1,13 @@
+include README.md README.zh-CN.md CHANGELOG.md LICENSE SECURITY.md CONTRIBUTING.md UPGRADING.md pyproject.toml
+include *.example.json
+recursive-include agent_workflow *.py
+recursive-include docs *.md
+recursive-include skills *.md
+recursive-include tests *.py *.json *.jsonl *.txt *.md *.log
+recursive-include tools *.py
+recursive-include examples *.py
+global-exclude *.pyc
+global-exclude .DS_Store
+include assets/brand/logo-light.svg assets/brand/logo-dark.svg
+prune .workflow
+prune .git
