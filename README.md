@@ -370,9 +370,10 @@ See [QUALITY](docs/QUALITY.md), [RESEARCH](docs/RESEARCH.md) and
 Read [CONTRIBUTING](CONTRIBUTING.md), [CHANGELOG](CHANGELOG.md),
 [SOURCE-PROVENANCE](docs/SOURCE-PROVENANCE.md) and [LICENSE](LICENSE).
 Keep failing tests/evidence, original authority and exact source binding; independent
-review is required rather than Agent self-attestation. This iteration improves distribution timeout diagnostics and records the first
-hosted CI results; runtime code is unchanged. It adds no provider call. Later
-changes require new CI results on their exact commit. The MIT notice is
+review is required rather than Agent self-attestation. This iteration enables verified local Git worktree projects with real CLI/MCP
+regressions. Core checkout validation changes; mandatory acceptance, permissions
+and budgets remain enforced. It adds no provider call. This runtime revision
+requires new CI results on its exact commit. The MIT notice is
 updated to the owner-confirmed TIM attribution; its MIT grant terms are unchanged.
 The GitHub-only private vulnerability channel still needs actual activation checks.
 No registry upload, external model call or remote publication is established by
