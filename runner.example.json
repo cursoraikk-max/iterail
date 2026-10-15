@@ -1,0 +1,12 @@
+{
+  "repo": "/absolute/reviewed/checkout",
+  "backend": "/absolute/project-local/node_modules/.bin/codex",
+  "checks": [
+    {"id": "output-cap", "argv": ["/absolute/python3", "/absolute/trusted-checks/output_cap.py", "--repo", "{repo}"], "repair": "Bound core verification raw output to 65536 bytes per stream with exact total-byte/truncation metadata and low memory."},
+    {"id": "orphan-guardian", "argv": ["/absolute/python3", "/absolute/trusted-checks/orphan_guardian.py", "--repo", "{repo}"], "repair": "Stop ordinary test descendants when the core verifier process is killed; preserve verification evidence and current lifecycle behavior."}
+  ],
+  "tests": [["/absolute/python3", "-m", "unittest", "discover", "-v"]],
+  "budget": {"wall_seconds": 1800, "max_calls": 8, "call_seconds": 180, "log_bytes": 262144, "max_attempts": 3},
+  "allowlist": ["agent_workflow/core.py", "agent_workflow/core_*.py", "docs/*.md"],
+  "poll_seconds": 5
+}
