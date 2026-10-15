@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "allowed_sources": ["failed_log", "unresolved_review", "owner_check"],
+  "registry": {
+    "example-status": {
+      "argv": ["/absolute/python3", "/absolute/owner-check.py", "--repo", "{repo}"],
+      "acceptance": {"exit_code": 1, "classification": "product_defect", "source_stable": true}
+    }
+  },
+  "queue": {"max_open": 20, "max_new_per_cycle": 3, "wip": 1, "aging_seconds": 60, "repro_seconds": 30, "log_bytes": 65536}
+}
