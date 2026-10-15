@@ -1,0 +1,17 @@
+name: Local alpha checks
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  offline-contracts:
+    runs-on: [self-hosted, linux, alpha-offline]
+    timeout-minutes: 20
+    steps:
+      # Place the reviewed checkout on the pre-provisioned runner before dispatch.
+      # No checkout action, download, provider, credentials or publishing step.
+      - name: Validate pre-provisioned source
+        shell: bash
+        run: |
+          test -f pyproject.toml
+          python3.11 -c 'import setuptools, wheel, pip'
+          python3.11 tools/check.py --output "$RUNNER_TEMP/alpha-results" --deadline "$(python3.11 -c 'import time; print(time.time()+1100)')"
