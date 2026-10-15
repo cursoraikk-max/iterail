@@ -259,7 +259,11 @@ stdio 子进程测试不是具体外部客户端已配置的证明。
 检查；实际结果以绑定当前源码的发布记录为准，不能冒用旧版本通过结果。对于该便携 alpha，Python3.14
 只有兼容预检证据，不代表当前完整套件已验证。AST 适配仅支持3.11/3.14，未知 minor 拒绝；
 不能据此保证全部 Python>=3.11 组合。Linux、Windows 与其他 Python minor 均未验证；
-POSIX 进程组行为不代表 Windows 隔离保证。远程 CI 未运行。
+POSIX 进程组行为不代表 Windows 隔离保证。已配置 GitHub 托管 `ubuntu-24.04` / `macos-14`、Python3.11 矩阵，main 的
+push/PR 及手动触发均执行完整55门禁、wheel/sdist 构建、独立安装和真实 CLI/MCP 冒烟。
+该配置替换旧 self-hosted 工作流，只用标准托管 runner，不用仓库密钥、不调用模型、不发布。
+构建工具从 PyPI 下载至全新 job venv，运行时仍无第三方依赖。本地 Mac 通过不代表托管
+Linux/macOS 通过；远端结果待确认，暂不添加通过徽章。见 [CI 说明](docs/CI.md)。
 
 在另外得到授权后，可运行完整套件，或重跑已安装的本地示例：
 
@@ -316,7 +320,7 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 阅读[贡献指南](CONTRIBUTING.md)、[变更记录](CHANGELOG.md)、
 [源码来源](docs/SOURCE-PROVENANCE.md)和[许可证](LICENSE)。保留失败测试与证据、原权限和准确
 源码绑定；需要独立审查，不能靠 Agent 自报。本次新增安装辅助脚本与文档，运行时代码未改；没有新增 runtime 能力、provider 调用
-或远程 CI 运行。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
+；CI 已配置，远端结果须核对准确提交。MIT 署名已按权利主体确认改为 TIM，MIT 授权条款不变；GitHub 唯一私密漏洞
 渠道仍须实际检查启用状态。本地文件不证明注册表上传、外部模型调用或远端发布已经发生。
 来源文档记录署名决定，但不据此认证未知第三方权利。
 
