@@ -45,6 +45,15 @@ main 的 PR 和手动触发。矩阵为 Ubuntu24.04/macOS14、Python3.11，不�
    fixed argv, clean environment and10-second timeout setting without waiting10 seconds.
    CI runs this against source and, with `-I --installed`, the installed wheel;
    these deterministic branch tests supplement the real Git/CLI/MCP tests above.
+   CI also runs `tests/packaging/hostbridge_recovery.py` against source and the
+   installed wheel (`-I --installed`). It uses disposable local Core ledgers and
+   real lease expiry to check explicit expired-ticket recovery, fresh pair charges,
+   replay/reopen, parallel retry and refusal boundaries. The owner wall-deadline
+   boundary is explicitly simulated. No model or native AI worker is dispatched;
+   the recovery fixture stops at `ready_review`, without independent AI acceptance.
+   Source and installed stdout/stderr are retained as scoped recovery artifacts,
+   including failure diagnostics. These checks do not complete a real interrupted
+   AI trial or verify detached scheduling.
 5. Official pinned upload-artifact retains scoped summaries/command logs for7 days,
    including failures; it excludes source copies, environments and state databases.
    GitHub stores normal CI logs/artifacts; this is not a package release.
