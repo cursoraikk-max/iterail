@@ -219,3 +219,83 @@ with the same device/inode. Both symlink substitution and ordinary directory
 replacement observed at that gate reject. This is a cooperative point-in-time
 check, not atomic open-directory execution; a malicious same-UID rename after
 the final check and inode reuse are not guaranteed against.
+
+## Explicit multi-intent Flow (local fixture slice)
+
+`agent_workflow.hostflow.Flow` is a separate opt-in API over the same
+Continuation, HostBridge and adapter protocol. It does **not** enlarge an existing
+OneShot grant: first initialization refuses any existing host intent. OneShot's
+original one-intent ceiling remains unchanged. Do not mix the two APIs on a flow
+ledger; OneShot refuses a multi-intent history.
+
+Before first dispatch, the owner supplies a separate regular JSON file outside
+source and pins its exact byte SHA256. It has exactly these fields:
+
+```json
+{
+  "schema_version": 1,
+  "continuation_state": "/absolute/owner/continuation",
+  "continuation_identity_sha256": "SHA256_OF_EXISTING_IDENTITY_JSON_BYTES",
+  "adapter_identity": "local-process-v1:EXACT_HOST_POLICY_SHA256",
+  "allowed_roles": ["worker", "review"],
+  "max_intents": 4,
+  "poll_seconds": 2
+}
+```
+
+The roles are a nonempty unique subset of `worker` and `review`. Quality resolver
+and expired-worker replacement dispatch are deliberately excluded from this
+slice: use existing separately authorized APIs, never silently replace a consumed
+intent. `max_intents` is a positive integer no larger than the original
+Continuation request ceiling. Polling is 1–60 seconds. The original owner identity,
+started/deadline, adapter and policy bytes are bound durably; restarts cannot
+repin them. The original Continuation budget still charges worker/review pairs,
+and remains authoritative independently of the additional host-intent ceiling.
+
+```sh
+python3 -B -m agent_workflow.hostflow \
+  --state /absolute/owner/continuation \
+  --flow-policy /absolute/owner/flow.json --flow-policy-sha256 EXACT_FLOW_SHA256 \
+  --host-policy /absolute/owner/local-process.json --host-policy-sha256 EXACT_HOST_SHA256 tick
+```
+
+Each `tick` dispatches **at most one** new intent. Subsequent due ticks observe
+that exact intent, reconcile real Core history through HostBridge and may admit
+the next role. A completed adapter process is not Core proof: worker-to-review
+requires actual current Core `ready_review` evidence and identity. A completed
+review process merely waits for the existing independent assessment, Core
+acceptance, exact receipt and promotion/CAS APIs. Flow neither synthesizes a
+receipt nor accepts/promotes a run. Only a later current, quality-admitted
+Continuation request may produce another worker. A newly promoted package must
+be invoked through its current physical reviewed runtime.
+
+`observe` and `reconcile` never start a new process. `cancel` persists the original
+Continuation stop before competing for the nonblocking host lock, then requests
+cancellation of the retained dispatch when possible. The owner ledger lock is
+not held during adapter start, so a slow start cannot itself prevent durable stop. Cancellation remains
+asynchronous and unknown until the adapter proves it. Stop/deadline bypass poll
+backoff and prevent new starts; a busy caller may need a later cancellation
+invocation to reach the adapter. A launch already in progress still has the
+existing cooperative spawn/stop race and adapter hard cutoff; no atomic OS-spawn
+transaction is claimed.
+
+Flow stores absolute `next_due` across restarts. Early `tick` performs no adapter
+operation or Core discovery. Idle Core discovery uses Continuation's existing
+cadence/backoff. Unknown, failed, cancelled or expired adapter outcomes never
+cause redispatch or refunds. Lost start replies reconcile the durable dispatch
+key; a consumed bridge ticket without a host intent blocks for owner diagnosis.
+Cursor and terminal identity are checked per request, so an earlier task's
+terminal observation cannot masquerade as a successor's observation.
+
+The Python interface is provider agnostic; the CLI intentionally uses only the
+existing owner-pinned **no-model LocalProcess fixture**. No wake source, loop,
+OS service, provider credentials, model CLI or real autonomous AI is installed or
+verified. `tests/packaging/host_flow.py` uses explicit simulated journal/assessment
+fixtures, actual Core verification and normal receipt/promotion, plus real
+LocalProcess worker/review fixtures, CLI observation and guardian hard timeout.
+It runs from source and an isolated installed wheel. Simulated reviewer metadata
+is never described as an external independent AI reviewer.
+
+新 Flow 必须有单独明确授权，不自动扩大旧 OneShot。每次 tick 最多派发一个意图；
+进程完成不等于 Core 验收。未知不重派、不退款；取消先持久 stop，原期限和预算
+保持不变。只验证本地 fixture、多步骤接续与恢复，未验收无人值守真实 AI。

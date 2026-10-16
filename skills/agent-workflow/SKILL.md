@@ -110,3 +110,13 @@ review, Core proof/acceptance and external SHA-bound receipt remain required;
 `finish()` reuses existing promotion and its lost-reply event recovery. Do not
 interpret blocked semantic resolution, local completion or a dispatch ticket as
 an overall goal, permission, model-readiness or unattended-operation success.
+
+For explicitly owner-approved multi-intent host fixtures, read
+`docs/HOST-SUPERVISOR.md` and use the separate `agent_workflow.hostflow.Flow`
+policy. It does not enlarge an existing OneShot intent. Only `tick` may start one
+new currently admitted dispatch; observe/reconcile never start. Preserve original
+Continuation identity/deadline/request spend, per-request host cursors and exact
+Core proof. Unknown outcomes block redispatch; cancel persists stop first.
+Worker/reviewer acceptance, receipt and promotion remain existing independent
+owner/Core operations. No provider, model CLI, OS wake service or automatic
+expired-worker replacement is authorized by this Skill or fixture API.
