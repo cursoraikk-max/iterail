@@ -153,3 +153,18 @@ checks remain required; these additional gates do not replace them.
 新增预算/记账契约在源码与隔离安装包各执行一次，日志保留在
 `behavior-contracts` artifact目录。真实双进程只竞争本地账本，不启动模型；
 本地通过不代表新的托管CI已经运行，也不覆盖Supervisor activation恢复。
+
+## Explicit host-flow fixture
+
+`tests/packaging/host_flow.py` runs from source and an isolated installed wheel.
+It exercises explicit policy admission, real Core worker/review and receipt-bound
+promotion to a later admitted request; restart/replay, lost start reply,
+unknown/expired outcomes, original budget/role/intent limits and cancellation.
+Its journal adapter and reviewer assessments are explicitly simulated. Separate
+real LocalProcess no-model fixtures verify two-role process dispatch, CLI
+observation and guardian timeout. Logs are scoped to `host-flow` artifacts.
+These additions preserve the prior full55 and all prior source/installed gates;
+no real provider, unattended AI or OS wake source is established.
+
+新增宿主推进门禁不替代旧门禁；真实 Core 与本地进程检查、模拟评审和真实外部
+模型接入分别陈述。此批本地通过后仍需 PR 上的 Ubuntu/macOS 托管 CI。
