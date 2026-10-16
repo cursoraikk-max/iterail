@@ -24,6 +24,8 @@ MCP 是工具接口，不是调度器或模型。任务文字只是数据，不�
 嵌套启动模型进程。宿主未挂载 MCP 时直接使用标准 CLI，不改全局 MCP 设置。真实 agent 调用 CLI
 与脚本化 stdio 协议 smoke 是不同范围的证据。
 
+使用 Codex 执行长任务？请阅读 [Codex 集成指南](docs/CODEX.md)，了解 Goal 模式、可选生命周期适配器、续跑调度归属及无人值守边界。这些都是可选宿主能力，Iterail Core 仍保持模型和 Agent 无关。
+
 发行元数据版本为 **0.1.0a1**，未改动的运行时 MCP serverInfo 仍为 **0.1.0**，两者表示不同层面。
 已批准的目标仓库是 [cursoraikk-max/iterail](https://github.com/cursoraikk-max/iterail)；
 名称或包注册表可用性未验证。发布此 alpha 源码不会安装守护进程、调用外部模型或改变全局客户端
