@@ -19,6 +19,11 @@
 SQLite 任务/run/事件历史、租约围栏与绑定源码的机器证明。调用方提供已授权的 worker；
 MCP 是工具接口，不是调度器或模型。任务文字只是数据，不能授予权限。
 
+**正常用法：**已运行且获授权的 Codex、Claude Code 或其他 agent，通过宿主终端调用 Iterail CLI，
+或使用项目级 MCP 连接。模型认证和唤醒由宿主负责；此 pull 工作流不需要 Iterail 另行登录模型或
+嵌套启动模型进程。宿主未挂载 MCP 时直接使用标准 CLI，不改全局 MCP 设置。真实 agent 调用 CLI
+与脚本化 stdio 协议 smoke 是不同范围的证据。
+
 发行元数据版本为 **0.1.0a1**，未改动的运行时 MCP serverInfo 仍为 **0.1.0**，两者表示不同层面。
 已批准的目标仓库是 [cursoraikk-max/iterail](https://github.com/cursoraikk-max/iterail)；
 名称或包注册表可用性未验证。发布此 alpha 源码不会安装守护进程、调用外部模型或改变全局客户端
@@ -317,6 +322,11 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 部署、公开回复或发布。模型路由、账户用量/费用遥测与 host/provider 验证仍待完成；字节减少不是
  token 节省或净费用证据。见[质量](docs/QUALITY.md)、[调研](docs/RESEARCH.md)与
 [策略](docs/STRATEGY.md)。本地 accepted 任务不代表所有目标完成。
+
+Core 发布证据应覆盖真正支持的宿主调用路径、干净安装与明确接口、状态恢复、明确兼容/升级策略，
+并绑定精确源码及可复现产物。24x7 服务、独立启动模型、计费/自动路由或内建搜索不是 Core 必需功能。
+可选启动适配器的初始化/EPERM 失败，只限制该适配器，不否定已实际证明的宿主 Core/CLI/MCP 路径。
+研究模块仍须满足隔离输入与审核转任务契约；这不表示内建搜索，也不证明未测试的宿主 MCP 接入。
 
 <!-- section:release -->
 ## 贡献、来源与发布状态

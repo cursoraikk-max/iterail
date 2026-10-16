@@ -1,5 +1,13 @@
 # Host supervisor boundary and bounded one-shot fixture
 
+This page describes **optional launch/fixture adapters**, not a prerequisite for
+normal use. An already running authorized agent can call the shared Core CLI or
+its host's mounted MCP tools directly; the host owns model login and wake-up.
+An independent CLI-launch initialization failure (including EPERM) does not make
+that separate path a Core release requirement. Keep its diagnostic evidence,
+without retrying login or launching a nested model merely to prove ordinary
+agent-internal Core use. See [primary host workflow](HOST.md).
+
 The one-shot fixture slice below is implemented. The broader provider and wake
 contract remains a design proposal, not an installed scheduler or a verified
 unattended model integration. Keep the persistent Core task ledger and owner policy authoritative.
