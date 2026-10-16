@@ -384,3 +384,9 @@ certifying unknown third-party rights.
 
 See [CONTRIBUTING](CONTRIBUTING.md) for installation/contribution and [CHANGELOG](CHANGELOG.md) for changes.
 [Host integration](docs/HOST.md) · [Skill](skills/agent-workflow/SKILL.md) · [Security](SECURITY.md) · [Upgrade/rollback](UPGRADING.md) · [Brand provenance](docs/BRAND.md).
+
+A bounded no-model host fixture is available through
+`python3 -m agent_workflow.hostsupervisor`: one durable HostBridge intent with
+start/observe/cancel/reconcile, restart coordination and the original owner
+budget. It does not install a scheduler or demonstrate unattended AI execution.
+See [host supervisor setup and limits](docs/HOST-SUPERVISOR.md#implemented-one-shot-slice).
