@@ -157,11 +157,26 @@ def git(repo, *args):
 
 
 def redact(value):
-    if isinstance(value,dict):return {k:('REDACTED' if k=='token' else redact(v)) for k,v in value.items()}
-    if isinstance(value,list):return [redact(x) for x in value]
-    if isinstance(value,str) and '"token"' in value:
-        try:return json.dumps(redact(json.loads(value)))
-        except ValueError:return value
+    """Legacy public marker; private canonical capture is never passed here."""
+    from .redaction import public
+    return public(value, marker='REDACTED')
+
+
+def _private_metadata(value):
+    """Preserve the existing token-only private reservation representation.
+
+    This is deliberately not the broader public export policy: changing paths or
+    arbitrary strings here would silently alter canonical owner receipt facts.
+    """
+    if isinstance(value, dict):
+        return {k: ('REDACTED' if k == 'token' else _private_metadata(v)) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_private_metadata(v) for v in value]
+    if isinstance(value, str) and '"token"' in value:
+        try:
+            return json.dumps(_private_metadata(json.loads(value)))
+        except ValueError:
+            return value
     return value
 
 
@@ -378,7 +393,7 @@ class _OwnerBridge:
         with self.tx():
             row=self.db.execute('SELECT result FROM reservations WHERE id=?',(ident,)).fetchone()
             if row is None: raise RunnerError('owner process reservation missing')
-            body=_json(row['result']); body['terminal']=redact(result)
+            body=_json(row['result']); body['terminal']=_private_metadata(result)
             self.db.execute("UPDATE reservations SET phase='finished',result=? WHERE id=?",(json.dumps(body),ident))
 
     def bind_launch(self, ident, runner_call):
@@ -1508,9 +1523,9 @@ def main():
         elif a.action=='step':result=r.step()
         elif a.action=='recover':result=r.recover_step()
         else:result=r.status()
-        print(json.dumps({'ok':True,'result':result}))
+        print(json.dumps(redact({'ok':True,'result':result})))
     except (RunnerError,WorkflowError,OSError,ValueError) as e:
-        print(json.dumps({'ok':False,'error':str(e)}));sys.exit(1)
+        print(json.dumps(redact({'ok':False,'error':str(e)})));sys.exit(1)
 
 
 if __name__=='__main__':main()
