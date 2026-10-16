@@ -1,5 +1,9 @@
 # Host workflow guidance
 
+For a finite owner scope that is complete, or a host that keeps continuing an
+already completed scope, follow the [completion and host-stop contract](HOST-COMPLETION.md).
+Retain local admission stop separately from actual host termination acknowledgement.
+
 The primary workflow is a running, authorized host agent calling Core through the
 standard CLI or an actually mounted project-local MCP tool. Authentication and
 wake-up stay with that host; Iterail does not require another model login or a
