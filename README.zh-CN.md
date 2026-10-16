@@ -332,3 +332,9 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 
 安装与贡献见 [CONTRIBUTING](CONTRIBUTING.md)，变更见 [CHANGELOG](CHANGELOG.md)；
 [宿主接入](docs/HOST.md) · [Skill](skills/agent-workflow/SKILL.md) · [安全](SECURITY.md) · [升级与回退](UPGRADING.md) · [品牌来源](docs/BRAND.md)。
+
+新增有界、无模型的宿主测试适配器：`python3 -m agent_workflow.hostsupervisor`。
+它通过 HostBridge 记录一次持久意图，支持启动、观察、取消与重启后协调，沿用原始
+owner 预算。当前每个 owner grant 最多处理一个意图，不自动启动后续 worker 或 reviewer。
+真实本地测试进程已覆盖丢失启动回复、并发入口、停止和到期；这不代表已验证无人值守
+AI 或已安装定时服务。配置、运行命令和边界见 [宿主单次调度说明](docs/HOST-SUPERVISOR.md)。
