@@ -20,6 +20,13 @@ share one Core, local SQLite task/run/event history, lease fencing and source-bo
 machine proof. The caller supplies an authorized running worker; MCP is a tool
 interface, not a scheduler or a model. Task text is inert data, not authority.
 
+**Normal use:** your already running Codex, Claude Code or other authorized agent
+calls Iterail through its terminal/CLI or a project-local MCP connection. The host
+supplies model authentication and wake-up; Iterail needs no separate model login
+or nested model process for this pull workflow. If MCP is not mounted in that
+host, use the standard CLI without changing global MCP settings. A CLI run by a
+real agent and a scripted stdio protocol smoke are different evidence scopes.
+
 Distribution metadata is **0.1.0a1**. Unchanged runtime MCP serverInfo is **0.1.0**;
 these are different version surfaces. The approved target repository is
 [cursoraikk-max/iterail](https://github.com/cursoraikk-max/iterail); package/name
@@ -361,6 +368,16 @@ does not validate them. No hosted AI-worker service, production hostile isolatio
 multi-day guarantee, GitHub/Discord/X feedback deployment, public reply or release
 is established. Future model routing, account usage/fee telemetry and host/provider
 validation remain open; byte reduction is not token savings or net cost evidence.
+
+Core release evidence should cover the actual supported host call path, clean
+installation and interfaces, recovery and an explicit compatibility/upgrade
+policy, all tied to reproducible exact-source artifacts. A 24x7 service,
+independent model launcher, billing/routing or built-in search is not a required
+Core feature. An optional launch adapter's initialization/EPERM failure limits
+that adapter, not the host's demonstrated Core/CLI/MCP path. Research still needs
+its own quarantined-input and reviewed-task-admission contract; a search backend
+is not implied. None of this establishes untested host MCP integrations.
+
 See [QUALITY](docs/QUALITY.md), [RESEARCH](docs/RESEARCH.md) and
 [STRATEGY](docs/STRATEGY.md). A local accepted task never marks all goals complete.
 
