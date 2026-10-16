@@ -1,31 +1,29 @@
 # Changelog
 
-## Unreleased — public evidence maintenance
+## 0.1.0a1 — alpha release candidate (not yet tagged or released)
 
-- Share bounded Runner/Evolution public redaction; keep private raw evidence and canonical hash semantics unchanged, with fake-credential and native capture regressions.
-- Cancel stale PR work only; use unique non-PR concurrency groups to retain main run evidence.
-- Add pinned incremental Ruff/mypy and coverage reporting without a threshold; preserve lifecycle, installation and all55 gates.
-- Refresh contributor/security/CI boundaries and add concise issue/PR templates. Record owner-verified GitHub private reporting and PR/two-platform CI requirements (2026-10-16); this source batch does not mutate repository settings. No provider, OS service or release is implied.
+These delivered source changes are collected for the proposed first alpha release.
+No tag or GitHub Release has been created yet; publication awaits final CI and the
+owner's release action. This is a local cooperative-workflow alpha, without a
+24×7, zero-human-intervention or all-host-integration guarantee.
 
-## Previously delivered source capabilities
+- Persist local tasks, leases, event history and source-bound evidence through a shared CLI/MCP Core; retain owner policy and independent acceptance boundaries.
+- Share bounded Runner/Evolution public redaction while keeping private raw evidence and canonical hashes unchanged; add fake-credential and native capture regressions.
+- Preserve original budget/deadline and recovery contracts with regression checks for Runner/Evolution accounting, quality recovery, promotion fences and host Flow dispatch/cancellation.
+- Add bounded host Flow start/observe/cancel/reconcile behavior. No-model transport fixtures establish their tested scope, not external-model or detached-service readiness.
+- Document the primary running-agent path: the authorized host owns authentication and wakeups, while Iterail supplies CLI/MCP state and evidence. Native host MCP connections remain separately unverified.
+- Add the optional bilingual [Codex guide](docs/CODEX.md), including authorized multi-task Goal examples, continuation ownership and runtime/preflight limits; no hooks, schedules or services are enabled.
+- Retain Linux/macOS CI, offline wheel/sdist CLI/MCP checks and the full55 gate; add pinned incremental Ruff/mypy and coverage reporting without a threshold. Cancel stale PR work only, preserving distinct main-run evidence.
+- Include bilingual README guides, the authored light/dark SVG identity, project-local MCP examples, installed lifecycle instructions and packaged documentation. Keep minimal synthetic fixtures free of private-origin fingerprints.
+- Apply owner-confirmed TIM attribution without changing MIT terms; add contributor/issue/PR guidance. GitHub-only private vulnerability reporting was owner-verified on 2026-10-16; see [the current security policy](SECURITY.md) for scope and availability checks.
 
-- Hosted Linux/macOS CI and offline wheel/sdist CLI/MCP checks.
-- Quality/expired-lease recovery, final promotion commit fences and bounded no-model host start/observe/cancel/reconcile fixtures.
-- These are scoped machine/transport results; they do not establish detached AI readiness or production isolation.
+## Historical 0.1.0a1 source preparation — before release-candidate consolidation
 
-## 0.1.0a1 — alpha source preparation
-
-- Restore the project-authored Iterail light/dark SVG identity and bilingual README overview, workflow diagram and documentation navigation.
-- Add equivalent English/简体中文 README guides, project-local MCP configuration,
-  offline installation commands and an exact installed no-model lifecycle example.
-- Include both README files and this changelog in wheel/sdist installed data.
-- Replace historical startup logs with minimal synthetic inputs under neutral paths; remove private-origin fingerprints.
-- Synchronize fixture locations/hashes and preserve runtime/unit tests/Skill and behavioral assertions.
-- Apply owner-confirmed TIM copyright attribution; retain all MIT grant terms.
-- Use GitHub-only private vulnerability reporting, with actual activation unverified.
-- Validate new exact-source scoped documentation/install/lifecycle/MCP behavior;
-  prior alpha full55 results remain historical and are not relabeled as rerun.
-- The owner approved the minimal source repository at cursoraikk-max/iterail.
-  Remote publication and private-reporting activation require actual verification.
-  No registry upload, hosted service, external model call or remote CI execution
-  is established by these local documents.
+The earlier source-preparation record covered branding, bilingual installation
+and documentation, synthetic fixture cleanup, copyright attribution and scoped
+local documentation/install/lifecycle/MCP checks. Its earlier full55 results were
+historical, not a claim that every subsequent source change had been rerun.
+Private vulnerability reporting and remote publication were unverified at that
+stage. The dated owner verification above supersedes that reporting observation;
+source preparation itself did not create a release, registry upload, hosted
+service or external model integration.
