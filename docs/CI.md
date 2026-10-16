@@ -168,3 +168,20 @@ no real provider, unattended AI or OS wake source is established.
 
 新增宿主推进门禁不替代旧门禁；真实 Core 与本地进程检查、模拟评审和真实外部
 模型接入分别陈述。此批本地通过后仍需 PR 上的 Ubuntu/macOS 托管 CI。
+
+## Finite-scope completion boundary
+
+`tests/packaging/host_completion.py` runs from source and the isolated installed
+wheel (`-I --installed`) after distribution installation. It checks real Core
+current/stale acceptance guidance and repeated durable Continuation stop gates
+through HostBridge, OneShot and Flow, retaining the original budget and pending
+identity. Its spy adapter attempts no starts; owner quality assessments and the
+deadline clock are explicitly native fixtures. This proves local admission
+behavior, not desktop Goal termination or an available host-stop capability.
+Source/installed stdout and stderr are retained in scoped `host-completion`
+artifacts. Existing full55 and all prior gates remain mandatory. The existing
+PR-only cancellation expression and unique push/manual run groups are unchanged.
+
+新增终态契约在源码与隔离安装包各执行一次，日志仅保留在 `host-completion`
+范围。局部 stop 不代表宿主 Goal 已停止；须由宿主提供准确目标的真实确认。
+修改后仍需核对本次提交的双平台托管 CI，不能复用历史通过记录。
