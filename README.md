@@ -390,3 +390,5 @@ A bounded no-model host fixture is available through
 start/observe/cancel/reconcile, restart coordination and the original owner
 budget. It does not install a scheduler or demonstrate unattended AI execution.
 See [host supervisor setup and limits](docs/HOST-SUPERVISOR.md#implemented-one-shot-slice).
+
+Public Runner/Evolution exports use bounded redaction; raw private logs and their hashes remain distinct. See [logging boundaries](docs/LOGGING.md) and [incremental developer checks](CONTRIBUTING.md#incremental-development-checks).
