@@ -1,0 +1,7 @@
+# Optional development-only checks; runtime remains standard-library-only.
+# Install in a project venv from the official PyPI index, never globally.
+ruff==0.11.13
+mypy==1.15.0
+coverage==7.8.2
+mypy_extensions==1.1.0
+typing_extensions==4.13.2

@@ -8,8 +8,8 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || format('run-{0}', github.run_id) }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 jobs:
   portable:
     name: ${{ matrix.os }} / Python 3.11
@@ -39,10 +39,13 @@ jobs:
       - name: Install build tools in a fresh environment
         run: |
           python -m venv "$RUNNER_TEMP/build-venv"
-          "$RUNNER_TEMP/build-venv/bin/python" -m pip install --index-url https://pypi.org/simple --only-binary=:all: pip==25.1.1 setuptools==80.7.1 wheel==0.45.1
+          "$RUNNER_TEMP/build-venv/bin/python" -m pip install --index-url https://pypi.org/simple --only-binary=:all: pip==25.1.1 setuptools==80.7.1 wheel==0.45.1 -r requirements-dev.txt
       - name: Full portable gate (55 required commands; no skips)
         run: |
           "$RUNNER_TEMP/build-venv/bin/python" -B tools/check.py --output "$RUNNER_TEMP/full55" --deadline "$("$RUNNER_TEMP/build-venv/bin/python" -c 'import time; print(time.time()+1100)')"
+      - name: Incremental Ruff, mypy and coverage report
+        run: |
+          "$RUNNER_TEMP/build-venv/bin/python" -B tools/check_quality.py --output "$RUNNER_TEMP/quality-baseline"
       - name: Wheel and sdist install with real CLI and MCP smoke
         run: |
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/distribution_diagnostics.py
@@ -67,6 +70,11 @@ jobs:
           mkdir "$RUNNER_TEMP/host-supervisor"
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/host_supervisor.py > "$RUNNER_TEMP/host-supervisor/source.stdout" 2> "$RUNNER_TEMP/host-supervisor/source.stderr"
           "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/host_supervisor.py --installed > "$RUNNER_TEMP/host-supervisor/installed.stdout" 2> "$RUNNER_TEMP/host-supervisor/installed.stderr"
+      - name: Public redaction and private evidence invariants (source and installed)
+        run: |
+          mkdir "$RUNNER_TEMP/public-redaction"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/public_redaction.py > "$RUNNER_TEMP/public-redaction/source.stdout" 2> "$RUNNER_TEMP/public-redaction/source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/public_redaction.py --installed > "$RUNNER_TEMP/public-redaction/installed.stdout" 2> "$RUNNER_TEMP/public-redaction/installed.stderr"
       - name: Retain scoped verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -87,3 +95,8 @@ jobs:
             ${{ runner.temp }}/quality-recovery/*.stderr
             ${{ runner.temp }}/host-supervisor/*.stdout
             ${{ runner.temp }}/host-supervisor/*.stderr
+            ${{ runner.temp }}/quality-baseline/*.json
+            ${{ runner.temp }}/quality-baseline/*.stdout
+            ${{ runner.temp }}/quality-baseline/*.stderr
+            ${{ runner.temp }}/public-redaction/*.stdout
+            ${{ runner.temp }}/public-redaction/*.stderr

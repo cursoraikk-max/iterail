@@ -19,8 +19,30 @@ agent-workflow = "agent_workflow.cli:main"
 include = ["agent_workflow*"]
 
 [tool.setuptools.data-files]
-"share/agent-workflow" = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "UPGRADING.md", "README.zh-CN.md", "CHANGELOG.md"]
+"share/agent-workflow" = ["README.md", "LICENSE", "SECURITY.md", "CONTRIBUTING.md", "UPGRADING.md", "README.zh-CN.md", "CHANGELOG.md", "requirements-dev.txt"]
 "share/agent-workflow/docs" = ["docs/*.md"]
 "share/agent-workflow/skills/agent-workflow" = ["skills/agent-workflow/SKILL.md"]
 
 "share/agent-workflow/assets/brand" = ["assets/brand/logo-light.svg", "assets/brand/logo-dark.svg"]
+
+# Incremental baseline: do not rewrite or reformat frozen historical fixtures.
+[tool.ruff]
+target-version = "py311"
+include = ["**/redaction.py", "**/public_redaction.py", "**/check_quality.py"]
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F82"]
+
+[tool.mypy]
+python_version = "3.11"
+files = ["agent_workflow/redaction.py"]
+strict = true
+follow_imports = "skip"
+
+[tool.coverage.run]
+branch = true
+source = ["agent_workflow.redaction"]
+
+[tool.coverage.report]
+show_missing = true
+# Reporting baseline only: intentionally no fail_under threshold.

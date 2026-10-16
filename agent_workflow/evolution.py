@@ -1167,12 +1167,9 @@ def _checkpoint_timeout(db, root, config):
 
 
 def _public_output(value):
-    """Redact public serialization only; canonical private facts remain unchanged."""
-    if isinstance(value,dict):
-        return {key:('[REDACTED]' if key=='token' else _public_output(item)) for key,item in value.items()}
-    if isinstance(value,list): return [_public_output(item) for item in value]
-    if isinstance(value,str): return re.sub(r'(?<![0-9a-f])[0-9a-f]{48}(?![0-9a-f])','[REDACTED]',value)
-    return value
+    """Public projection only; canonical private facts remain unchanged."""
+    from .redaction import public
+    return public(value)
 
 
 def main():

@@ -338,3 +338,5 @@ MCP 与 HostBridge 本身不调用平台启动 Agent。可选 runner/provider �
 owner 预算。当前每个 owner grant 最多处理一个意图，不自动启动后续 worker 或 reviewer。
 真实本地测试进程已覆盖丢失启动回复、并发入口、停止和到期；这不代表已验证无人值守
 AI 或已安装定时服务。配置、运行命令和边界见 [宿主单次调度说明](docs/HOST-SUPERVISOR.md)。
+
+Runner/Evolution 公共导出使用统一的有界脱敏策略；原始私有日志及其哈希保持独立，不代表任意日志都可安全公开。见[日志边界](docs/LOGGING.md)及[渐进开发检查](CONTRIBUTING.md#incremental-development-checks)。
