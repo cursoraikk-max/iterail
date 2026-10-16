@@ -3,6 +3,18 @@ name: agent-workflow
 description: Use shared local CLI or MCP to discover, claim, verify and hand off evidence-driven AI pull tasks.
 ---
 
+For a finite owner scope that is finished or keeps receiving continuation,
+read the [completion and host-stop contract](../../docs/HOST-COMPLETION.md).
+Establish current source-bound scope acceptance and applicable independent review;
+one accepted task or historical success alone is insufficient. Record stop on the
+existing Continuation before more discovery/claim/dispatch and preserve its original
+budget across wakes. The host may use only its actually available, authorized stop
+capability for the exact target. Without acknowledgement, report scope complete
+but host termination unconfirmed and manual action required; exit without restarting
+work or polling indefinitely. Local stop, process completion and ending a turn do
+not prove a desktop Goal stopped. Missing/stale proof or human blocks remain blocked;
+never invent a tool or clear the stop to keep an already completed scope busy.
+
 The primary caller is the already running authorized host agent. Its host owns
 model authentication and wake-up; do not start another model CLI or create a
 model login to use Core. If project-local Iterail MCP tools are not mounted, use
