@@ -1,7 +1,8 @@
-# Host supervisor boundary and proposed portable contract
+# Host supervisor boundary and bounded one-shot fixture
 
-This is a design proposal, not an installed scheduler or a verified unattended
-integration. Keep the persistent Core task ledger and owner policy authoritative.
+The one-shot fixture slice below is implemented. The broader provider and wake
+contract remains a design proposal, not an installed scheduler or a verified
+unattended model integration. Keep the persistent Core task ledger and owner policy authoritative.
 The CLI and MCP are alternative Core transports, not competing state stores.
 
 ## Existing pieces and remaining responsibilities
@@ -74,3 +75,147 @@ and interruption recovery. Deterministic process fixtures can validate ledger
 and adapter state transitions; they cannot prove a paid provider or autonomous
 wake-up integration. No new service, provider, credentials or global configuration
 is installed by this change.
+
+
+## Implemented one-shot slice
+
+`agent_workflow.hostsupervisor.HostAdapter` defines `start(intent)`,
+`observe(intent)`, `cancel(intent)` and `reconcile(intent)`. Every observation
+contains `execution_id`, `dispatch_key`, `state`, integer `sequence` and numeric
+`observed_at`. Identity/cursor regression rejects; missing or stale running
+observations remain `uncertain`. An observation is never Core proof or acceptance.
+The Python protocol has no model dependency. Its first implementation,
+`LocalProcess`, is an explicitly authorized **POSIX local fixture** using the
+existing guardian; Windows execution is unverified.
+
+`OneShot(continuation, adapter).run(action)` serializes callers on the existing
+Continuation directory. On the first `tick`, HostBridge reserves and begins a
+currently admitted request. An immutable host intent is committed in the same
+Continuation SQLite ledger **before** `adapter.start` is called. Adapter identity
+is bound on first use and cannot be replaced on restart. The executing host
+package must match the current reviewed physical Continuation runtime; changed
+controller bytes refuse a new launch. The intent carries the
+original deadline, role, source/controller packet and opaque execution identity.
+`source_root` identifies the candidate checkout; `workdir` separately binds the
+actual owner-selected fixture cwd. The wrapper and guardian entry recheck the
+original stop/deadline and cancellation mailbox before child launch.
+Budget counters remain solely in Continuation; host observation grants no lease
+renewal. Once an intent exists, all subsequent invocations only observe,
+reconcile or cancel it. This thin slice intentionally handles **one intent per
+owner grant**, including after terminal completion: it does not auto-dispatch a
+reviewer, successor, replacement or quality resolver. Existing HostBridge/Core
+APIs remain necessary for independently authorized work and receipts.
+
+A consumed HostBridge ticket with no host intent is uncertain and cannot be
+started again. A lost start reply, missing local job, failed spawn or missing
+observation similarly cannot refund spend or permit redispatch. A successful
+fixture process does not bind a Core run or accept/promote any code. Current
+quality admission is checked by HostBridge before dispatch; independent Core
+verification, reviewer attribution, quality assessment and promotion gates are
+unchanged. See `tests/packaging/host_supervisor.py` and the existing quality and
+promotion regressions.
+
+## Explicit fixture owner setup and command
+
+Create a fresh ordinary Continuation using the reviewed Core/Continuation setup
+in [CONTINUATION.md](CONTINUATION.md). Keep its original grant; do not create a
+new grant to retry an uncertain fixture. Place a trusted, **no-model** Python
+fixture script and its work directory outside the editable checkout. No fixture
+policy is inferred from a task body or public feedback.
+
+Write a separate owner JSON file with exactly these keys (replace placeholders
+with existing absolute resolved paths and SHA256 values):
+
+```json
+{
+  "schema_version": 1,
+  "fixture_only": true,
+  "continuation_state": "/absolute/owner/continuation",
+  "executable_path": "/absolute/resolved/python3",
+  "executable_sha256": "SHA256_OF_EXECUTABLE_BYTES",
+  "script_path": "/absolute/owner/fixture.py",
+  "script_sha256": "SHA256_OF_SCRIPT_BYTES",
+  "cwd": "/absolute/owner/fixture-work",
+  "max_seconds": 10,
+  "output_bytes": 2048
+}
+```
+
+The policy, executable and script must be outside the candidate. Hash the exact
+JSON bytes and keep that hash with the owner grant. The fixture executable runs
+`-I -B` against a private job snapshot of the approved script bytes, with no
+task-supplied argv. Both the initial caller and the final guardian spawn gate
+validate the owner-pinned original script/interpreter hashes; the final gate also
+checks exact argv, policy identity and snapshot hash. Cooperative edits observed
+before that gate reject without executing replacement content. Later original
+file edits cannot change the approved snapshot being executed. This is not a
+filesystem transaction or protection from malicious same-UID rewrites of the
+private snapshot, interpreter or dependencies. Imported dependencies are not
+frozen by this single-script fixture. The environment has a private HOME,
+fixed PATH/LANG and an execution ID; it does not inherit provider credentials.
+`fixture_only` is an owner assertion about trusted code, not an OS sandbox or
+proof that arbitrary code cannot access the account. Do not select a model
+launcher under this fixture grant.
+
+```bash
+python3 -m agent_workflow.hostsupervisor   --state /absolute/owner/continuation   --host-policy /absolute/owner/host-policy.json   --host-policy-sha256 EXACT_JSON_SHA256 tick
+```
+
+Use the same arguments with `observe`, `reconcile` or `cancel`. Each command
+returns structured JSON and exits; none installs a wake source or loops as a
+scheduler. Owner stop/deadline prevents a fresh dispatch. A later invocation
+requests cancellation of an existing intent after stop/deadline. Cancellation
+is asynchronous: a request is not evidence that execution stopped. The fixture
+wrapper also enforces the original absolute deadline and the smaller per-process
+ceiling without another invocation.
+
+For a fully self-contained no-model diagnostic, run:
+
+```bash
+python3 -B tests/packaging/host_supervisor.py
+# After tools/check_distribution.py:
+/absolute/distribution/wheel/venv/bin/python -I -B   tests/packaging/host_supervisor.py --installed
+```
+
+The test owns temporary projects and processes. It exercises real start,
+completion, cancel, guardian timeout, parallel callers, restart and lost replies,
+as well as stop/expiry/quality refusal. It changes no user setup.
+
+## Process identity, cancellation and limits
+
+The local adapter records a unique execution ID and nonce in the owned job
+mailbox. Only the original guardian holds the actual subprocess handle/group.
+A restarted caller writes an exact nonce-bound cancel request; it never sends a
+signal to a stored PID. The existing guardian handles EOF, bounded output and
+process-group cleanup. Terminal observations require its matching result with
+confirmed group cleanup. PID files remain diagnostic only. Missing/mismatched
+identity or result fails closed. Original owner stop and child termination are
+separate events; an already admitted launch can race with a later stop and must
+be cancelled/observed. There is no atomic OS-spawn/SQLite transaction.
+
+The bounded wrapper may outlive the one-shot caller only until its fixed
+resource cutoff. This is a temporary fixture process, not an OS service. A crash
+before host launch may consume an intent without execution; no exactly-once
+external guarantee is claimed. OS power-loss durability and hostile same-UID
+file/DB mutation are outside the tested cooperative process-restart contract.
+Escaped sessions or a killed guardian retain the existing guardian limitations.
+No paid model, detached AI host, provider routing, authenticated external cancel,
+automatic wake, long-running self-development or worker/reviewer execution is
+verified by these fixture checks.
+
+
+Recovery initialization validates the immutable owner policy, adapter identity,
+reviewed controller and nonce-bound job, but does not reopen mutable launch
+inputs. Editing or deleting the original script/executable, or losing the launch
+cwd, does not by itself revoke observe/cancel/reconcile of an existing job.
+A new start still validates all launch inputs and cannot silently repin them.
+Cancellation continues through the existing guardian mailbox, never a recovered
+PID. A final launch refusal retains `launch-rejection.json`; without a matching
+actual guardian result it remains uncertain rather than reporting completed.
+
+The initial launch records cwd device/inode identity. The final guardian gate
+requires a canonical directory without symlink components, outside source_root,
+with the same device/inode. Both symlink substitution and ordinary directory
+replacement observed at that gate reject. This is a cooperative point-in-time
+check, not atomic open-directory execution; a malicious same-UID rename after
+the final check and inode reuse are not guaranteed against.
