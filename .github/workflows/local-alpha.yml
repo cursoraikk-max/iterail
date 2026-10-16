@@ -75,6 +75,13 @@ jobs:
           mkdir "$RUNNER_TEMP/public-redaction"
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/public_redaction.py > "$RUNNER_TEMP/public-redaction/source.stdout" 2> "$RUNNER_TEMP/public-redaction/source.stderr"
           "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/public_redaction.py --installed > "$RUNNER_TEMP/public-redaction/installed.stdout" 2> "$RUNNER_TEMP/public-redaction/installed.stderr"
+      - name: Runner budget and Evolution accounting contracts (source and installed)
+        run: |
+          mkdir "$RUNNER_TEMP/behavior-contracts"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/runner_budget_contract.py > "$RUNNER_TEMP/behavior-contracts/runner-source.stdout" 2> "$RUNNER_TEMP/behavior-contracts/runner-source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/runner_budget_contract.py --installed > "$RUNNER_TEMP/behavior-contracts/runner-installed.stdout" 2> "$RUNNER_TEMP/behavior-contracts/runner-installed.stderr"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/evolution_accounting_contract.py > "$RUNNER_TEMP/behavior-contracts/evolution-source.stdout" 2> "$RUNNER_TEMP/behavior-contracts/evolution-source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/evolution_accounting_contract.py --installed > "$RUNNER_TEMP/behavior-contracts/evolution-installed.stdout" 2> "$RUNNER_TEMP/behavior-contracts/evolution-installed.stderr"
       - name: Retain scoped verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -100,3 +107,5 @@ jobs:
             ${{ runner.temp }}/quality-baseline/*.stderr
             ${{ runner.temp }}/public-redaction/*.stdout
             ${{ runner.temp }}/public-redaction/*.stderr
+            ${{ runner.temp }}/behavior-contracts/*.stdout
+            ${{ runner.temp }}/behavior-contracts/*.stderr
