@@ -1,5 +1,19 @@
 # Host workflow guidance
 
+The primary workflow is a running, authorized host agent calling Core through the
+standard CLI or an actually mounted project-local MCP tool. Authentication and
+wake-up stay with that host; Iterail does not require another model login or a
+nested `codex exec`. When native Iterail MCP tools are unavailable, use CLI and
+report that scope. A subprocess stdio test validates protocol behavior, not a
+real Codex/Claude Code MCP connection. The optional launch adapters have separate
+readiness evidence and cannot gate a different host call path solely because
+that adapter cannot initialize. Follow normal claim, exact-source machine proof,
+independent review and acceptance; another task needs its own valid claim.
+
+The host-driven sequence remains bounded by its original owner grant. Do not
+report it as detached 24x7 operation or infer unknown token costs. If no independent
+reviewer mechanism exists, hand off at `ready_review`; do not review yourself.
+
 A running host worker can connect the project-local MCP stdio interface, inspect `capabilities` with `{}`, then call `next_step` with exactly one known `task_id` or `run_id`. The Core method and CLI action share the same reader:
 
 ```sh
