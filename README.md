@@ -27,6 +27,8 @@ or nested model process for this pull workflow. If MCP is not mounted in that
 host, use the standard CLI without changing global MCP settings. A CLI run by a
 real agent and a scripted stdio protocol smoke are different evidence scopes.
 
+Using Codex for long-running work? See the [Codex integration guide](docs/CODEX.md) for Goal mode, optional lifecycle adapters, continuation ownership and unattended-run boundaries. These are optional host capabilities; Iterail Core remains model- and agent-independent.
+
 Distribution metadata is **0.1.0a1**. Unchanged runtime MCP serverInfo is **0.1.0**;
 these are different version surfaces. The approved target repository is
 [cursoraikk-max/iterail](https://github.com/cursoraikk-max/iterail); package/name
