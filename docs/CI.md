@@ -104,3 +104,10 @@ Official references:
 [checkout](https://github.com/actions/checkout),
 [setup-python](https://github.com/actions/setup-python),
 [upload-artifact](https://github.com/actions/upload-artifact).
+
+The bounded host fixture gate runs `tests/packaging/host_supervisor.py` from source
+and the isolated installed wheel on both existing POSIX runners. It starts only
+trusted temporary no-model Python subprocesses and retains scoped stdout/stderr.
+Real process start, cancellation, timeout, restart, parallel calls and lost
+start replies are distinct from provider or unattended AI validation. Existing
+quality, final promotion and full55 gates remain mandatory and unchanged.
