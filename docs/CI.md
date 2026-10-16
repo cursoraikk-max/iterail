@@ -54,6 +54,20 @@ main 的 PR 和手动触发。矩阵为 Ubuntu24.04/macOS14、Python3.11，不�
    Source and installed stdout/stderr are retained as scoped recovery artifacts,
    including failure diagnostics. These checks do not complete a real interrupted
    AI trial or verify detached scheduling.
+   `tests/packaging/quality_recovery.py` additionally runs against source and the
+   isolated installed wheel, with separate scoped stdout/stderr artifacts. It
+   uses real Core/CLI operations and natural lease expiry under pinned quality
+   authority. Deterministic owner assessment fixtures cover fresh retry admission,
+   stale/self/untrusted review refusal, quality regression before acceptance and
+   stale/regressed/wrong-run assessment refusal after acceptance before promotion.
+   Attempts, pair charges and stop/deadline boundaries remain in force; the owner
+   deadline is explicitly simulated. These are process contracts, not model calls,
+   an actual independent AI review or an unattended host acceptance.
+   `tests/packaging/promotion_commit.py` runs in both modes too, with separate
+   `commit-source`/`commit-installed` logs in the same scoped artifact directory.
+   It covers final-commit authority changes, real-time assessment age expiry,
+   rollback after the final event, file binding drift and an actual Core claim
+   competing for the WAL writer reservation. It does not launch a model.
 5. Official pinned upload-artifact retains scoped summaries/command logs for7 days,
    including failures; it excludes source copies, environments and state databases.
    GitHub stores normal CI logs/artifacts; this is not a package release.
