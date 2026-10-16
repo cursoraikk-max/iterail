@@ -14,6 +14,7 @@ import subprocess
 import sys
 import threading
 import time
+from types import SimpleNamespace
 import uuid
 
 
@@ -170,10 +171,11 @@ class Continuation:
                 finally: fcntl.flock(stream, fcntl.LOCK_UN)
 
     @contextlib.contextmanager
-    def _tx(self):
+    def _tx(self, *, before_commit=None):
         self.db.execute('BEGIN IMMEDIATE')
         try:
             yield
+            if before_commit is not None: before_commit()
             self.db.execute('COMMIT')
         except BaseException:
             self.db.execute('ROLLBACK');raise
@@ -203,6 +205,27 @@ class Continuation:
         db.row_factory = sqlite3.Row
         try: return [dict(row) for row in db.execute(query, args)]
         finally: db.close()
+
+    @contextlib.contextmanager
+    def _promotion_core(self, deadline):
+        """Reserve the real WAL writer, without writing Core application data.
+
+        Lock order: Continuation flock -> Core writer -> Continuation transaction.
+        No Core subprocess may be invoked until this reservation is released.
+        mode=ro/BEGIN would only pin a stale snapshot and cannot exclude a claim.
+        """
+        path=Path(self.policy['core_state'])/'tasks.sqlite'
+        require(path.is_file() and not path.is_symlink(), 'initialized Core history required')
+        db=sqlite3.connect('file:'+str(path)+'?mode=rw',uri=True,isolation_level=None,
+                           timeout=min(10,max(.001,deadline-self._now())))
+        db.row_factory=sqlite3.Row
+        try:
+            db.execute('BEGIN IMMEDIATE')
+            db.execute('PRAGMA query_only=ON')
+            yield db
+        finally:
+            if db.in_transaction: db.execute('ROLLBACK')
+            db.close()
 
     def _core_policy(self):
         descriptor = self.policy['core_policy'];raw = regular(descriptor['path'])
@@ -519,6 +542,7 @@ class Continuation:
                     and evidence['source_unchanged'] is True and evidence['ownership_valid_at_finish'] is True
                     and len(evidence['results']) >= len(self._core_policy()['tests'])
                     and all(item['exit_code'] == 0 for item in evidence['results']), 'fresh accepted machine evidence required')
+            policy = self._core_policy()
             path = absolute(receipt_path);require(not path.is_relative_to(Path(self.policy['repo'])), 'independent receipt must be outside editable repo')
             raw = regular(path);require(hash_value(receipt_sha256) and sha(raw) == receipt_sha256, 'independent receipt SHA mismatch')
             receipt = load(raw)
@@ -535,14 +559,42 @@ class Continuation:
             version = self._version({'controller_path': str(controller), 'package_sha256': package,
                                      'source_sha256': run['candidate'], 'head': self._git('rev-parse', 'HEAD')})
             self._runtime(version)
-            active = self._core_read("SELECT id FROM runs WHERE state IN ('running','changed','verifying','verified','ready_review') AND lease_until>? AND deadline>?", (time.time(), time.time()))
-            require(not active, 'in-flight Core work prevents version handoff')
-            with self._tx():
-                latest = self._row();require(load(latest['active_version'])['id'] == expected_version and latest['request'] == row['request'], 'promotion CAS conflict')
-                self.db.execute('UPDATE meta SET active_version=?,request=NULL,phase=?,reason=?,next_due=? WHERE id=1',
-                                (encoded(version).decode(), 'ready', 'independently accepted physical version promoted', self._now()+self.policy['cadence']['interval_seconds']))
-                self._event('version_promoted', {'previous': old, 'active': version, 'request': pending,
-                                              'receipt_path': str(path), 'receipt_sha256': receipt_sha256, 'core_evidence_sha256': sha(encoded(evidence))})
+            with self._promotion_core(row['deadline']) as db:
+                require(load(db.execute('SELECT body FROM policy WHERE id=1').fetchone()[0])==policy,
+                        'frozen Core policy identity changed')
+                current_run=db.execute('SELECT * FROM runs WHERE id=?',(run['id'],)).fetchone()
+                current_task=db.execute('SELECT * FROM tasks WHERE id=?',(task['id'],)).fetchone()
+                require(current_run is not None and current_task is not None
+                        and all(current_run[k]==v for k,v in run.items()) and dict(current_task)==task,
+                        'accepted Core snapshot changed before promotion')
+                active=db.execute("SELECT id FROM runs WHERE state IN ('running','changed','verifying','verified','ready_review') AND lease_until>? AND deadline>?",(time.time(),time.time())).fetchall()
+                require(not active,'in-flight Core work prevents version handoff')
+                witness=None
+                if 'quality_policy' in policy:
+                    from .quality import guard_accept,check_acceptance_witness
+                    try: witness=guard_accept(SimpleNamespace(config=policy,db=db),dict(current_run))
+                    except ValueError:
+                        raise ContinuationError('fresh independent quality assessment required before promotion') from None
+                def final_fence():
+                    # File writers do not participate in SQLite transactions.
+                    # Bind their final snapshots, then check time/authority last.
+                    require(digest(Path(self.policy['repo']))==run['candidate']
+                            and digest(Path(old['controller_path'])/'agent_workflow')==old['package_sha256']
+                            and digest(controller/'agent_workflow')==package
+                            and sha(regular(path))==receipt_sha256
+                            and sha(regular(self.policy['core_policy']['path']))==self.policy['core_policy']['sha256'],
+                            'promotion file binding changed')
+                    if 'quality_policy' in policy: check_acceptance_witness(policy,witness)
+                    require(self._gate(self._row()) is None,'owner stopped or expired before promotion commit')
+                with self._tx(before_commit=final_fence):
+                    latest=self._row();require(load(latest['active_version'])['id']==expected_version and latest['request']==row['request'],'promotion CAS conflict')
+                    final_fence()
+                    require(self._gate(latest) is None,'owner stopped or expired before promotion update')
+                    self.db.execute('UPDATE meta SET active_version=?,request=NULL,phase=?,reason=?,next_due=? WHERE id=1',
+                                    (encoded(version).decode(),'ready','independently accepted physical version promoted',self._now()+self.policy['cadence']['interval_seconds']))
+                    self._event('version_promoted',{'previous':old,'active':version,'request':pending,
+                                'receipt_path':str(path),'receipt_sha256':receipt_sha256,'core_evidence_sha256':sha(encoded(evidence)),
+                                'quality_assessment_sha256':witness['assessment_sha256'] if witness else None})
             return self._status(self._row())
 
 
