@@ -135,3 +135,21 @@ full55, host/quality/promotion and distribution checks remain mandatory.
 This revision's hosted results must be checked after root publication; local
 success is not hosted queue validation. Official concurrency reference:
 https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
+
+
+## Budget and accounting behavior contracts
+
+`tests/packaging/runner_budget_contract.py` fixes wall-budget boundary admission,
+reviewer allowance, unchanged ledgers on denial/reopen, and two real processes
+competing for one worker admission. `evolution_accounting_contract.py` fixes
+upfront pair charging, idempotent completion, rejected rebinding/overuse,
+unknown incomplete terminal observations, and two processes competing for the
+last pair. Both run from source and an isolated installed wheel (`--installed`).
+Their subprocesses reserve local SQLite entries only: no backend or model runs.
+Explicit `actual_used` completion metadata is a native accounting fixture, not
+proof of an actual worker launch. Existing full55 and installation/lifecycle
+checks remain required; these additional gates do not replace them.
+
+新增预算/记账契约在源码与隔离安装包各执行一次，日志保留在
+`behavior-contracts` artifact目录。真实双进程只竞争本地账本，不启动模型；
+本地通过不代表新的托管CI已经运行，也不覆盖Supervisor activation恢复。
