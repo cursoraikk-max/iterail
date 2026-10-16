@@ -55,6 +55,13 @@ jobs:
           mkdir "$RUNNER_TEMP/recovery"
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/hostbridge_recovery.py > "$RUNNER_TEMP/recovery/source.stdout" 2> "$RUNNER_TEMP/recovery/source.stderr"
           "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/hostbridge_recovery.py --installed > "$RUNNER_TEMP/recovery/installed.stdout" 2> "$RUNNER_TEMP/recovery/installed.stderr"
+      - name: Quality-mode recovery (source and installed wheel)
+        run: |
+          mkdir "$RUNNER_TEMP/quality-recovery"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/quality_recovery.py > "$RUNNER_TEMP/quality-recovery/source.stdout" 2> "$RUNNER_TEMP/quality-recovery/source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/quality_recovery.py --installed > "$RUNNER_TEMP/quality-recovery/installed.stdout" 2> "$RUNNER_TEMP/quality-recovery/installed.stderr"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/promotion_commit.py > "$RUNNER_TEMP/quality-recovery/commit-source.stdout" 2> "$RUNNER_TEMP/quality-recovery/commit-source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/promotion_commit.py --installed > "$RUNNER_TEMP/quality-recovery/commit-installed.stdout" 2> "$RUNNER_TEMP/quality-recovery/commit-installed.stderr"
       - name: Retain scoped verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -71,3 +78,5 @@ jobs:
             ${{ runner.temp }}/distribution/*.stderr
             ${{ runner.temp }}/recovery/*.stdout
             ${{ runner.temp }}/recovery/*.stderr
+            ${{ runner.temp }}/quality-recovery/*.stdout
+            ${{ runner.temp }}/quality-recovery/*.stderr
