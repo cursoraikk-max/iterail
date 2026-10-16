@@ -1,8 +1,10 @@
 # Source provenance and release status
 
-This alpha carries the existing locally developed agent-workflow runtime without
-runtime edits. Runtime26 Python files and original26 unit-test files are preserved
-byte-for-byte. The portable suite includes a pinned manifest and87 exact fixtures;
+The initial alpha packaging carried the then-existing26 runtime Python files and
+26 unit-test files without edits. That is a historical inventory, not the current
+file count or a claim that later reviewed runtime changes never occurred. Current
+changes are recorded in Git/CHANGELOG; the87 pinned historical fixture files
+remain unchanged by this maintenance batch. The portable suite includes a pinned manifest and87 exact fixtures;
 its relocated paths are harness adaptation, not relaxed behavioral assertions.
 Historical CLI startup logs were removed for release privacy. The two replacement
 files under startup-errors/ contain only a minimal synthetic warning/error signature,
@@ -23,8 +25,8 @@ source repository at https://github.com/cursoraikk-max/iterail. The previous int
 placeholder attribution is replaced by "Copyright (c) 2026 TIM"; the MIT grant terms
 are unchanged. This records the owner decision, not an invented legal assignment
 or certification of every possible upstream right. Vulnerability reports use
-GitHub Private Vulnerability Reporting only; its actual enablement remains
-unverified until checked on the repository. Never publish confidential details in
+GitHub Private Vulnerability Reporting only; the owner verified it enabled on2026-10-16. This dated settings observation is
+separate from source validation and can change later. Never publish confidential details in
 Issues when private reporting is unavailable. Only two project-authored Iterail SVG lockups are restored under the current owner instruction; concept references, raster previews and old draft documents remain excluded. See [brand provenance](BRAND.md). agent-workflow is the distribution name; registry and
 trademark availability have not been checked. No registry release is authorized.
 
