@@ -14,6 +14,16 @@ Iterail 通过 CLI/MCP 提供流程状态与证据；已授权宿主负责运行
 
 继续遵守上述宿主、续跑和质量协议。Owner policy、租约、绑定源码的机器证据及独立审核仍是权威；请求包不是授权。不能靠自报验收；缺少规定的独立审核者时停在 `ready_review`。
 
+## Preflight before freezing a task / 冻结任务前预检
+
+Use the host-approved writable workspace and confirm the actual runtime and configured test commands work there before freezing owner policy/configuration. Prefer that existing authorized workspace to avoid unnecessary approval requests; do not change global configuration or assume approvals will never be needed.
+
+先使用宿主已授权的可写工作区，确认实际运行时及配置的测试命令在该目录可用，再冻结 owner policy 和配置。优先沿用已有授权工作区，避免不必要审批；不更改全局配置，也不保证全程无需审批。
+
+If a runtime/configuration problem requires a new state store, explicitly link the old and new state/task/run identities, preserve failed history, and confirm the old state has no active leases before proceeding. Do not silently refresh the original aggregate budget or deadline. If only the host maintains the cumulative ledger across states, say so explicitly; without a machine-enforced cross-state ledger, durable budget inheritance has not been verified. This is an operating requirement, not a new Core capability.
+
+若运行时或配置问题确需另建 state，须明确关联新旧 state、task 和 run 标识，保留失败历史，并先确认旧 state 无活动租约。不能静默刷新原总预算或截止时间。若跨 state 累计总账仅由宿主维护，必须明确说明；没有机器约束的跨 state 总账，就不能宣称持久化预算继承已验证。这是操作要求，并非新增 Core 能力。
+
 ## Goal mode / Goal 模式
 
 Official documentation describes `/goal` for interactive Codex CLI, desktop app and IDE extension. Enter it as a real user command in a supported host, not a string returned by an Iterail tool. CLI controls include `/goal pause`, `/goal resume`, `/goal edit` and `/goal clear`. Existing sandbox and approval boundaries remain; this does not guarantee uninterrupted execution. [Long-running work](https://learn.chatgpt.com/docs/long-running-work), [CLI developer commands](https://learn.chatgpt.com/docs/developer-commands?surface=cli).
