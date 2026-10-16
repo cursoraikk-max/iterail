@@ -76,13 +76,14 @@ Only `contents: read` is granted. No repository secrets, deployments, services,
 provider credentials, `pull_request_target`, third-party Actions or untrusted
 PR-title/body interpolation in shell commands are used. PR source still executes
 as test code on an ephemeral runner; the workflow is not a hostile-code sandbox.
-Concurrency cancels obsolete runs of the same branch/PR; fail-fast is false so one
+Only runs for the same PR cancel obsolete PR runs; push/manual runs use unique
+run groups. Fail-fast is false so one
 platform failure does not hide the other platform's result. Standard hosted runners
 are intended for this public repository; do not switch to paid larger runners or
 change billing settings if GitHub reports a restriction. Report the restriction.
 
 权限仅 contents:read，不需仓库密钥、模型凭据或发布权限。PR 测试源码仍是可执行代码，
-不能将临时 runner 当成恶意代码沙箱。相同分支/PR 新运行取消旧运行，两个平台独立报告。
+不能将临时 runner 当成恶意代码沙箱。同一 PR 新运行取消旧 PR 运行；push/手动运行按 run_id 独立分组，两个平台独立报告。
 遇到额度或付费限制应报告并暂停，不能切到付费大型 runner 或修改计费/账号安全设置。
 
 ## Local reproduction
@@ -111,3 +112,26 @@ trusted temporary no-model Python subprocesses and retains scoped stdout/stderr.
 Real process start, cancellation, timeout, restart, parallel calls and lost
 start replies are distinct from provider or unattended AI validation. Existing
 quality, final promotion and full55 gates remain mandatory and unchanged.
+
+## Evidence retention and incremental checks / 证据保留与渐进检查
+
+Only PR runs share a PR-number concurrency group and cancel older PR work. Push
+and manual runs use unique github.run_id groups, so a newer main push does not
+replace a pending or running main result through workflow concurrency. This does
+not promise runner capacity, unlimited retention, FIFO scheduling or protection
+from manual/platform cancellation. The existing7-day artifact retention remains.
+
+PR 按编号分组并取消旧 PR 运行；push/手动运行使用独立 run_id，不因同一个 main
+分组而丢失排队证据。平台容量、手动取消和保留期限仍是独立边界。
+
+The job-local build venv also installs requirements-dev.txt. tools/check_quality.py
+runs pinned incremental Ruff/mypy and a coverage report without a minimum
+percentage. Its artifacts identify a focused baseline, not whole-project
+coverage. Source and isolated installed public-redaction regressions additionally
+check fake credentials and preserved native private evidence. All previous
+full55, host/quality/promotion and distribution checks remain mandatory.
+
+基线仍运行原有生命周期及安装检查；覆盖率仅报告，不设卡线，不替代55门禁。
+This revision's hosted results must be checked after root publication; local
+success is not hosted queue validation. Official concurrency reference:
+https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
