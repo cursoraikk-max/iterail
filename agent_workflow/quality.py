@@ -162,6 +162,20 @@ def recovery(disposition,reason):
     return ['Host must reconcile actual claims and dispatch the eligible task within the original lease, attempt and controller constraints.']
 
 
+def claimable_after_expiry(db,task):
+    """Read-only projection of the lease cleanup performed by Core.claim.
+
+    Never requeue here. Deadline-only expiry cannot qualify because Core's
+    existing claim transaction reaps by lease_until, not by run deadline.
+    """
+    if task['state']=='queued': return True
+    if task['state'] not in {'running','changed','verifying','verified','ready_review'}: return False
+    rows=db.execute("SELECT state,lease_until FROM runs WHERE task_id=? ORDER BY rowid DESC",(task['id'],)).fetchall()
+    active={'running','changed','verifying','verified','ready_review'}
+    return (bool(rows) and rows[0]['state'] in active
+            and all(row['state'] not in active or row['lease_until']<=time.time() for row in rows))
+
+
 def project(config,db,workflow, worker=None, task_id=None):
     source=None; ah=None; selected=None; admission=None; active_id=None; p=None; goal_statuses=[]; achieved=False
     ph=config['quality_policy'].get('sha256')
@@ -210,7 +224,7 @@ def project(config,db,workflow, worker=None, task_id=None):
             if task_id and c['task_id']!=task_id: continue
             task=db.execute('SELECT * FROM tasks WHERE id=?',(c['task_id'],)).fetchone()
             count=db.execute('SELECT count(*) FROM runs WHERE task_id=?',(task['id'],)).fetchone()[0]
-            if task['state']!='queued' or count>=config['budget']['max_attempts']: continue
+            if not claimable_after_expiry(db,task) or count>=config['budget']['max_attempts']: continue
             if any(h.get('source')==source and h.get('finding')==c['finding_id'] and h.get('task')!=task['id'] for h in history): continue
             if c['kind']=='feature' and (not passing or blocks): continue
             if c['kind']=='repair' and passing and not blocks: continue
@@ -260,9 +274,27 @@ def guard_accept(engine,run):
         entry=strict(engine.db.execute("SELECT data FROM events WHERE run_id=? AND kind='quality_admitted'",(run['id'],)).fetchone()[0])
         if entry['bootstrap']: return
         p=load(engine.config); source=_source(engine.config['repo'])
-        a,_,proof=assessment(p,engine.config,engine.db,source,run['worker'])
+        a,assessment_sha,proof=assessment(p,engine.config,engine.db,source,run['worker'])
         if not p['ui_required'] and a['dimensions']['ui']['status']!='not_applicable': raise ValueError('non-UI assessment required')
         if a['proof_run_id']!=run['id'] or not machine(engine.db,proof,engine.config,source): raise ValueError('fresh proof required')
         for name,dim in a['dimensions'].items():
             if dim['status'] in {'block','unknown'} or dim['status']=='advisory' and name not in p['allowed_advisories']: raise ValueError('review incomplete')
+        return {'assessment_path':p['assessment_path'],'assessment_sha256':assessment_sha,
+                'created_at':a['created_at'],'valid_until':a['created_at']+p['max_assessment_age_seconds']}
     except (ValueError,LookupError,TypeError,KeyError,OSError): raise WorkflowError('fresh independent quality assessment required') from None
+
+
+def check_acceptance_witness(config,witness):
+    """Bounded final file/time CAS for an already validated semantic snapshot."""
+    from .core import WorkflowError
+    try:
+        p=load(config)
+        if witness is None: return  # Existing frozen evidence-only bootstrap.
+        if p['assessment_path']!=witness['assessment_path']: raise ValueError('assessment path changed')
+        raw=read_regular(external(p['assessment_path'],Path(config['repo']).resolve()))
+        now=time.time()
+        if (hashlib.sha256(raw).hexdigest()!=witness['assessment_sha256']
+                or now>witness['valid_until'] or witness['created_at']>now+60):
+            raise ValueError('assessment changed or expired')
+    except (ValueError,LookupError,TypeError,KeyError,OSError):
+        raise WorkflowError('fresh independent quality assessment required before promotion') from None
