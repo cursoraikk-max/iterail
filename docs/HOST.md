@@ -1,5 +1,9 @@
 # Host workflow guidance
 
+For an owner-approved budget shared across task-state directories and restarts,
+use the opt-in [engineering scope and preflight](ENGINEERING-SCOPE.md). Configure
+it before freezing work; a state directory is not a new grant.
+
 For a finite owner scope that is complete, or a host that keeps continuing an
 already completed scope, follow the [completion and host-stop contract](HOST-COMPLETION.md).
 Retain local admission stop separately from actual host termination acknowledgement.
