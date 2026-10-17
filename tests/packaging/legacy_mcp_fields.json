@@ -1,0 +1,251 @@
+{
+  "capabilities": [
+    {},
+    []
+  ],
+  "change": [
+    {
+      "run_id": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token"
+    ]
+  ],
+  "claim": [
+    {
+      "task_id": "string",
+      "worker": "string"
+    },
+    [
+      "worker"
+    ]
+  ],
+  "context_query": [
+    {
+      "byte_budget": "string",
+      "if_none_match": "string",
+      "mandatory_paths": "string",
+      "max_file_bytes": "string",
+      "query": "string"
+    },
+    [
+      "query"
+    ]
+  ],
+  "experience_query": [
+    {
+      "failure_fingerprint": "string",
+      "include_stale": "string",
+      "limit": "string",
+      "source_digest": "string"
+    },
+    []
+  ],
+  "experience_record": [
+    {
+      "expires_seconds": "string",
+      "kind": "string",
+      "proof_seq": "string",
+      "run_id": "string",
+      "statement": "string"
+    },
+    [
+      "kind",
+      "run_id"
+    ]
+  ],
+  "fail": [
+    {
+      "reason": "string",
+      "run_id": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token",
+      "reason"
+    ]
+  ],
+  "handoff_build": [
+    {
+      "budget_bytes": "string",
+      "run_id": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token"
+    ]
+  ],
+  "handoff_read": [
+    {
+      "handoff_id": "string",
+      "include_stale": "string"
+    },
+    [
+      "handoff_id"
+    ]
+  ],
+  "heartbeat": [
+    {
+      "run_id": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token"
+    ]
+  ],
+  "history": [
+    {
+      "task_id": "string"
+    },
+    [
+      "task_id"
+    ]
+  ],
+  "import": [
+    {
+      "body": "string",
+      "external_key": "string",
+      "source": "string",
+      "title": "string"
+    },
+    [
+      "external_key",
+      "title"
+    ]
+  ],
+  "next_step": [
+    {
+      "run_id": "string",
+      "task_id": "string"
+    },
+    []
+  ],
+  "producer_discover": [
+    {
+      "limit": "string"
+    },
+    []
+  ],
+  "producer_init": [
+    {},
+    []
+  ],
+  "producer_offer": [
+    {
+      "body": "string",
+      "check_id": "string",
+      "external_key": "string",
+      "source": "string",
+      "source_ref": "string",
+      "title": "string"
+    },
+    [
+      "source",
+      "external_key",
+      "check_id",
+      "title"
+    ]
+  ],
+  "producer_scan": [
+    {
+      "limit": "string"
+    },
+    []
+  ],
+  "progress": [
+    {
+      "note": "string",
+      "run_id": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token",
+      "note"
+    ]
+  ],
+  "queue_status": [
+    {},
+    []
+  ],
+  "status": [
+    {
+      "run_id": "string",
+      "task_id": "string"
+    },
+    []
+  ],
+  "transition": [
+    {
+      "run_id": "string",
+      "target": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token",
+      "target"
+    ]
+  ],
+  "uiux_discover": [
+    {},
+    []
+  ],
+  "uiux_evidence": [
+    {
+      "evidence": "string",
+      "run_id": "string",
+      "stage": "string"
+    },
+    [
+      "run_id",
+      "stage",
+      "evidence"
+    ]
+  ],
+  "uiux_init": [
+    {
+      "policy": "string"
+    },
+    [
+      "policy"
+    ]
+  ],
+  "uiux_query": [
+    {},
+    []
+  ],
+  "uiux_review": [
+    {
+      "findings": "string",
+      "rationale": "string",
+      "reviewer": "string",
+      "rubric": "string",
+      "run_id": "string",
+      "verdict": "string"
+    },
+    [
+      "run_id",
+      "reviewer",
+      "rubric",
+      "verdict",
+      "rationale",
+      "findings"
+    ]
+  ],
+  "verify": [
+    {
+      "run_id": "string",
+      "token": "string"
+    },
+    [
+      "run_id",
+      "token"
+    ]
+  ]
+}
