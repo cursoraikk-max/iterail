@@ -60,7 +60,7 @@ def digest(root):
 
 def validate_config(c):
     required = {'repo', 'tests', 'sources', 'budget', 'acceptance', 'permissions'}
-    if not isinstance(c, dict) or not required <= set(c) or set(c)-required-{'producer_policy','uiux_policy','quality_policy'}:
+    if not isinstance(c, dict) or not required <= set(c) or set(c)-required-{'producer_policy','uiux_policy','quality_policy','engineering_scope'}:
         raise WorkflowError('config requires exactly ' + ', '.join(sorted(required)))
     repo = Path(c['repo']).resolve()
     metadata = repo / '.git'
@@ -80,6 +80,9 @@ def validate_config(c):
             checkout = False
     if not checkout:
         raise WorkflowError('repo must be a local git checkout')
+    from .scope import enforce_binding
+    try:enforce_binding(dict(c,repo=str(repo)))
+    except (ValueError,OSError,TypeError) as error:raise WorkflowError(str(error)) from error
     if not isinstance(c['tests'], list) or not c['tests']:
         raise WorkflowError('tests must be a nonempty argv list')
     for argv in c['tests']:
@@ -115,6 +118,16 @@ def validate_config(c):
         from .quality import load
         try: load(c)
         except (ValueError,TypeError,KeyError,OSError): raise WorkflowError('invalid owner quality policy') from None
+    if 'engineering_scope' in c:
+        from .scope import Scope
+        try:
+            with Scope(c['engineering_scope']) as scope:
+                if scope.policy['repo'] != str(repo) or scope.policy['tests'] != c['tests']:
+                    raise ValueError('scope repo/test commands differ from owner policy')
+                if not scope.preflight()['passed']:
+                    raise ValueError('scope environment preflight blocked before project freeze')
+        except (ValueError,OSError,TypeError,sqlite3.Error) as error:
+            raise WorkflowError(str(error)) from error
     return dict(c, repo=str(repo))
 
 
@@ -139,16 +152,17 @@ def uiux_policy(config,repo):
     except ValueError as error:raise WorkflowError(str(error)) from error
 
 
-def _capability_inventory(workflow=None):
+def _capability_inventory(workflow=None, engineering_scope=False):
     """Pure supported-interface metadata; no owner state or operational health query."""
-    from .mcp import FIELDS, PROTOCOL_VERSIONS, SERVER_INFO
+    from .mcp import SCOPE_FIELDS, tool_fields, PROTOCOL_VERSIONS, SERVER_INFO
     return {
         'schema_version': 1,
         'package': dict(SERVER_INFO),
         'workflow_package_sha256': workflow if workflow is not None else digest(Path(__file__).parent),
         'interfaces': {'core': True, 'cli': True,
                        'mcp': {'transport': 'stdio', 'protocol_versions': list(PROTOCOL_VERSIONS),
-                               'tools': sorted(FIELDS)}},
+                               'tools': sorted(tool_fields(engineering_scope)),
+                               'optional_engineering_scope_tools': sorted(SCOPE_FIELDS)}},
         'host': {'agent_dispatch': 'caller_supplied', 'autonomous_model_dispatch': False,
                  'model_dependency': False},
         'boundaries': {'read_only': True, 'claims_work': False, 'executes_commands': False,
@@ -186,12 +200,14 @@ class Engine:
                     raise WorkflowError('policy is frozen; create a separately reviewed project state')
         self.config = c
         self.workflow = digest(Path(__file__).parent)
+        if 'engineering_scope' in c:
+            self.db.execute('CREATE TABLE IF NOT EXISTS scope_links(request_id TEXT PRIMARY KEY,run_id TEXT UNIQUE NOT NULL)')
         if c.get('producer_policy'):
             self.producer_init()
 
     def capabilities(self):
         """Describe this controller's supported interfaces without reconciling state."""
-        return _capability_inventory(self.workflow)
+        return _capability_inventory(self.workflow, engineering_scope='engineering_scope' in self.config)
 
     def next_step(self, task_id='', run_id='', **extra):
         """Observe advisory recovery guidance without reconciling stored state."""
@@ -340,10 +356,41 @@ class Engine:
             self.event(tid, None, 'imported', {'source': source, 'external_key': external_key})
             return self.status(task_id=tid)
 
-    def claim(self, worker, task_id=None):
+    def _scope_call(self, action, *args):
+        from .scope import Scope
+        if 'engineering_scope' not in self.config:
+            raise WorkflowError('engineering scope not configured')
+        try:
+            with Scope(self.config['engineering_scope']) as scope:
+                return getattr(scope, action)(*args)
+        except (ValueError,OSError,TypeError,sqlite3.Error) as error:
+            raise WorkflowError(str(error)) from error
+
+    def scope_status(self):
+        return self._scope_call('reconcile')
+
+    def scope_preflight(self):
+        return self._scope_call('preflight')
+
+    def scope_repair(self, run_id, token, repair_id, reason):
+        return self._scope_call('repair', self, run_id, token, repair_id, reason)
+
+    def claim(self, worker, task_id=None, request_id=''):
+        from .scope import enforce_binding
+        try:enforce_binding(self.config)
+        except (ValueError,OSError,TypeError) as error:raise WorkflowError(str(error)) from error
+        if 'engineering_scope' in self.config:
+            return self._scope_call('claim', self, worker, task_id, request_id)
+        if request_id:
+            raise WorkflowError('request_id requires an owner engineering scope')
+        return self._claim(worker, task_id)
+
+    def _claim(self, worker, task_id=None, _scope_key=None, _deadline=None):
         if not isinstance(worker, str) or not worker.strip():
             raise WorkflowError('worker must be named')
         now = time.time()
+        if _deadline is not None and now >= _deadline:
+            raise WorkflowError('scope absolute deadline exhausted')
         with self.tx():
             self.reconcile()
             for r in self.db.execute("SELECT * FROM runs WHERE state IN ('running','changed','verifying','verified','ready_review') AND lease_until<=?", (now,)).fetchall():
@@ -383,8 +430,12 @@ class Engine:
                     raise WorkflowError('quality claim blocked: '+quality['reason'])
             rid, token = 'run-' + uuid.uuid4().hex[:12], secrets.token_hex(24)
             baseline = digest(self.config['repo'])
+            if _deadline is not None and time.time() >= _deadline:
+                raise WorkflowError('scope absolute deadline exhausted before local claim commit')
             self.db.execute('INSERT INTO runs VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                            (rid, row['id'], worker, token, 'running', now, now+b['lease_seconds'], now+b['run_seconds'], json.dumps(self.config, sort_keys=True), row['revision'], self.workflow, baseline, None, None))
+                            (rid, row['id'], worker, token, 'running', now, min(now+b['lease_seconds'], _deadline) if _deadline is not None else now+b['lease_seconds'], min(now+b['run_seconds'], _deadline) if _deadline is not None else now+b['run_seconds'], json.dumps(self.config, sort_keys=True), row['revision'], self.workflow, baseline, None, None))
+            if _scope_key is not None:
+                self.db.execute('INSERT INTO scope_links VALUES(?,?)', (_scope_key,rid))
             self.db.execute("UPDATE tasks SET state='running' WHERE id=?", (row['id'],))
             self.event(row['id'], rid, 'claimed', {'worker': worker, 'workflow': self.workflow, 'baseline': baseline, 'revision': row['revision'], 'policy': self.config})
             if quality_admission is not None:

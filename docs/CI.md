@@ -171,6 +171,16 @@ no real provider, unattended AI or OS wake source is established.
 
 ## Finite-scope completion boundary
 
+The additional `tests/packaging/engineering_scope.py` gate runs from source and
+the isolated installed wheel (`-I --installed`), retaining scoped
+`engineering-scope` stdout/stderr. It covers cross-state cumulative limits,
+real concurrent callers, unknown-outcome fencing, deadline admission and runtime
+preflight. Node capability and crash failures are explicit native fixtures; no
+model/backend wake is tested. Scoped MCP exposes30 tools; the unscoped catalog
+retains27 with optional scope metadata. All older
+gates and PR-only cancellation remain required. Local success does not establish
+hosted results for this new commit.
+
 `tests/packaging/host_completion.py` runs from source and the isolated installed
 wheel (`-I --installed`) after distribution installation. It checks real Core
 current/stale acceptance guidance and repeated durable Continuation stop gates
