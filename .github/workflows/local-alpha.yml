@@ -92,6 +92,13 @@ jobs:
           mkdir "$RUNNER_TEMP/host-completion"
           "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/host_completion.py > "$RUNNER_TEMP/host-completion/source.stdout" 2> "$RUNNER_TEMP/host-completion/source.stderr"
           "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/host_completion.py --installed > "$RUNNER_TEMP/host-completion/installed.stdout" 2> "$RUNNER_TEMP/host-completion/installed.stderr"
+      - name: Shared engineering scope and preflight (source and installed)
+        run: |
+          mkdir "$RUNNER_TEMP/engineering-scope"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/mcp_contract.py > "$RUNNER_TEMP/engineering-scope/contract-source.stdout" 2> "$RUNNER_TEMP/engineering-scope/contract-source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/mcp_contract.py --installed > "$RUNNER_TEMP/engineering-scope/contract-installed.stdout" 2> "$RUNNER_TEMP/engineering-scope/contract-installed.stderr"
+          "$RUNNER_TEMP/build-venv/bin/python" -B tests/packaging/engineering_scope.py > "$RUNNER_TEMP/engineering-scope/source.stdout" 2> "$RUNNER_TEMP/engineering-scope/source.stderr"
+          "$RUNNER_TEMP/distribution/wheel/venv/bin/python" -I -B tests/packaging/engineering_scope.py --installed > "$RUNNER_TEMP/engineering-scope/installed.stdout" 2> "$RUNNER_TEMP/engineering-scope/installed.stderr"
       - name: Retain scoped verification evidence
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
@@ -123,3 +130,5 @@ jobs:
             ${{ runner.temp }}/host-flow/*.stderr
             ${{ runner.temp }}/host-completion/*.stdout
             ${{ runner.temp }}/host-completion/*.stderr
+            ${{ runner.temp }}/engineering-scope/*.stdout
+            ${{ runner.temp }}/engineering-scope/*.stderr
