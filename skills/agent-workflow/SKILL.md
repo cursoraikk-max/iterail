@@ -15,6 +15,17 @@ work or polling indefinitely. Local stop, process completion and ending a turn d
 not prove a desktop Goal stopped. Missing/stale proof or human blocks remain blocked;
 never invent a tool or clear the stop to keep an already completed scope busy.
 
+When the owner enables `engineering_scope`, read
+[shared engineering scope](../../docs/ENGINEERING-SCOPE.md) before freezing tasks.
+Use the original descriptor across every state/restart, preflight the selected
+runtime, and retain the same scoped claim `request_id` after lost replies.
+Unknown execution requires original-ledger reconciliation, never a fresh dispatch.
+Call `scope_repair` before a distinct in-run repair with a stable repair ID; retry
+claims of the same work already charge a repair unit. Never delete the Git owner
+marker, recreate the ledger, omit the descriptor or change the grant to reset
+deadline/counters. Preflight is a capability snapshot, not a test pass or host
+readiness proof. Explicitly report dependencies that block admission.
+
 The primary caller is the already running authorized host agent. Its host owns
 model authentication and wake-up; do not start another model CLI or create a
 model login to use Core. If project-local Iterail MCP tools are not mounted, use
