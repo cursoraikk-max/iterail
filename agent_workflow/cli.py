@@ -5,7 +5,7 @@ from .core import Engine, WorkflowError, _capability_inventory
 
 
 def dispatch(engine, action, args):
-    methods = {**{name: name for name in ('next_step','capabilities','uiux_init','uiux_discover','uiux_evidence','uiux_review','uiux_query','context_query','handoff_build','handoff_read','experience_record','experience_query','producer_init','producer_offer','producer_scan','producer_discover','queue_status')}, 'import': 'import_task', 'claim': 'claim', 'heartbeat': 'heartbeat', 'progress': 'progress',
+    methods = {**{name: name for name in ('scope_status','scope_preflight','scope_repair','next_step','capabilities','uiux_init','uiux_discover','uiux_evidence','uiux_review','uiux_query','context_query','handoff_build','handoff_read','experience_record','experience_query','producer_init','producer_offer','producer_scan','producer_discover','queue_status')}, 'import': 'import_task', 'claim': 'claim', 'heartbeat': 'heartbeat', 'progress': 'progress',
                'change': 'change', 'verify': 'verify', 'transition': 'transition', 'status': 'status', 'history': 'history', 'fail': 'fail'}
     if action not in methods:
         raise WorkflowError('unknown action')
@@ -16,7 +16,7 @@ def main():
     p = argparse.ArgumentParser(description='Evidence-driven local AI pull workflows')
     p.add_argument('--state', required=True, help='shared local state directory')
     p.add_argument('--config', help='initial project JSON; frozen after initialization')
-    p.add_argument('action', choices=['next_step', 'capabilities', 'init', 'import', 'claim', 'heartbeat', 'progress', 'change', 'verify', 'transition', 'status', 'history', 'fail', 'mcp', 'producer_init', 'producer_offer', 'producer_scan', 'producer_discover', 'queue_status', 'experience_record', 'experience_query', 'handoff_build', 'handoff_read', 'context_query', 'uiux_init', 'uiux_discover', 'uiux_evidence', 'uiux_review', 'uiux_query'])
+    p.add_argument('action', choices=['scope_status','scope_preflight','scope_repair','next_step', 'capabilities', 'init', 'import', 'claim', 'heartbeat', 'progress', 'change', 'verify', 'transition', 'status', 'history', 'fail', 'mcp', 'producer_init', 'producer_offer', 'producer_scan', 'producer_discover', 'queue_status', 'experience_record', 'experience_query', 'handoff_build', 'handoff_read', 'context_query', 'uiux_init', 'uiux_discover', 'uiux_evidence', 'uiux_review', 'uiux_query'])
     p.add_argument('--args', default='{}', help='JSON object of action arguments')
     ns = p.parse_args()
     try:
